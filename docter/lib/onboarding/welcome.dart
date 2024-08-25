@@ -11,7 +11,7 @@ class _WelcomePageState extends State<WelcomePage> {
   void initState() {
     super.initState();
     // Navigate to GetStartedPage after a 3-second delay
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () {
       Navigator.of(context).pushReplacementNamed('/getstarted');
     });
   }
@@ -19,7 +19,7 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF0064F7), // Background color of the page
+      backgroundColor: const Color(0xFF0064F7), // Background color of the page
       body: Center(
         child: Column(
           mainAxisSize:
@@ -30,9 +30,9 @@ class _WelcomePageState extends State<WelcomePage> {
               height: 150.0,
               width: 150.0,
             ), // Your image asset
-            Text(
+            const Text(
               'Docter',
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: 'SFProDisplay',
                 fontWeight: FontWeight.w400,
                 fontSize: 30, // Text size

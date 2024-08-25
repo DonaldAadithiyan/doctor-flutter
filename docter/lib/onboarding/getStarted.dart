@@ -24,12 +24,12 @@ class GetStartedPage extends StatelessWidget {
               'Welcome to Docter!',
               style: TextStyle(
                 fontFamily: 'SFProDisplay',
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w400,
                 fontSize: 30, // Adjust text size as needed
                 color: Color(0xFF0064F7),
               ),
             ),
-            SizedBox(height: 40), // Space between text and buttons
+            const SizedBox(height: 40), // Space between text and buttons
             // Buttons
             ElevatedButton(
               onPressed: () {
@@ -38,9 +38,9 @@ class GetStartedPage extends StatelessWidget {
               },
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
-                backgroundColor: Color(0xFF0064F7), // Button text color
-                side: BorderSide(color: Color(0xFF0064F7), width: 1),
-                minimumSize: Size(370, 50), // Button size
+                backgroundColor: const Color(0xFF0064F7), // Button text color
+                side: const BorderSide(color: Color(0xFF0064F7), width: 1),
+                minimumSize: const Size(370, 50), // Button size
               ),
               child: const Text(
                 'Login',
@@ -51,19 +51,19 @@ class GetStartedPage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 10), // Space between buttons
+            const SizedBox(height: 10), // Space between buttons
             ElevatedButton(
               onPressed: () {
                 Navigator.pushNamed(
                     context, '/register'); // Navigate to register page
               },
               style: ElevatedButton.styleFrom(
-                foregroundColor: Color(0xFF0064F7),
+                foregroundColor: const Color(0xFF0064F7),
                 backgroundColor: Colors.white, // Button text color
-                side: BorderSide(color: Color(0xFF0064F7), width: 1),
-                minimumSize: Size(370, 50), // Button size
+                side: const BorderSide(color: Color(0xFF0064F7), width: 1),
+                minimumSize: const Size(370, 50), // Button size
               ),
-              child: Text(
+              child: const Text(
                 'Register',
                 style: TextStyle(
                   fontFamily: 'SFProDisplay',

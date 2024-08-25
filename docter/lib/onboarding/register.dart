@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RegisterPage extends StatelessWidget {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFFFFFFF),
+      backgroundColor: const Color(0xFFFFFFFF),
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Register',
           style: TextStyle(
             fontFamily: 'SFProDisplay',
@@ -15,99 +23,169 @@ class RegisterPage extends StatelessWidget {
             fontWeight: FontWeight.w700,
           ),
         ),
-        backgroundColor: Color(0xFFFFFFFF), // AppBar background color
+        backgroundColor: const Color(0xFFFFFFFF),
         leading: IconButton(
-          icon: Icon(CupertinoIcons.back,
-              color: Colors.black), // Back button icon
+          icon: const Icon(CupertinoIcons.back, color: Colors.black),
           onPressed: () {
-            Navigator.pop(context); // Navigate back
+            Navigator.pop(context);
           },
-          tooltip: 'Back', // Optional tooltip text
-          iconSize: 22, // Adjust icon size as needed
+          tooltip: 'Back',
+          iconSize: 22,
         ),
       ),
       body: SafeArea(
         child: Container(
-          color: Color(0xFFFFFFFF), // Page background color
+          color: const Color(0xFFFFFFFF),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0)
-                .copyWith(top: 30), // Padding for the content
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0).copyWith(top: 30),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment:
-                  CrossAxisAlignment.stretch, // Full-width layout for children
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // Name text field
+                TextField(
+                  controller: nameController,
+                  decoration: InputDecoration(
+                    labelText: 'Name',
+                    filled: true,
+                    fillColor: const Color(0xFFF6F7F9),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide.none,
+                    ),
+                    prefixIcon: const Padding(
+                      padding: EdgeInsets.only(left: 15.0, right: 19),
+                      child:
+                          Icon(CupertinoIcons.person, color: Color(0xFF0064F7)),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
                 // Email text field
                 TextField(
+                  controller: emailController,
                   decoration: InputDecoration(
                     labelText: 'Email',
                     filled: true,
-                    fillColor: Color(0xFFF6F7F9), // Background color
+                    fillColor: const Color(0xFFF6F7F9),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0), // Oval shape
-                      borderSide: BorderSide.none, // Remove border
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide.none,
                     ),
-                    prefixIcon: Padding(
-                      padding: const EdgeInsets.only(left: 15.0, right: 19),
+                    prefixIcon: const Padding(
+                      padding: EdgeInsets.only(left: 15.0, right: 19),
                       child: Icon(CupertinoIcons.envelope,
-                          color: Color(0xFF0064F7)), // Envelope icon
+                          color: Color(0xFF0064F7)),
                     ),
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 // Password text field
                 TextField(
+                  controller: passwordController,
                   decoration: InputDecoration(
                     labelText: 'Password',
                     filled: true,
-                    fillColor: Color(0xFFF6F7F9), // Background color
+                    fillColor: const Color(0xFFF6F7F9),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0), // Oval shape
-                      borderSide: BorderSide.none, // Remove border
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide.none,
                     ),
-                    prefixIcon: Padding(
-                      padding: const EdgeInsets.only(left: 15.0, right: 19),
-                      child: Icon(CupertinoIcons.lock,
-                          color: Color(0xFF0064F7)), // Lock icon
+                    prefixIcon: const Padding(
+                      padding: EdgeInsets.only(left: 15.0, right: 19),
+                      child:
+                          Icon(CupertinoIcons.lock, color: Color(0xFF0064F7)),
                     ),
                   ),
                   obscureText: true,
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 // Confirm Password text field
                 TextField(
+                  controller: confirmPasswordController,
                   decoration: InputDecoration(
                     labelText: 'Confirm Password',
                     filled: true,
-                    fillColor: Color(0xFFF6F7F9), // Background color
+                    fillColor: const Color(0xFFF6F7F9),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0), // Oval shape
-                      borderSide: BorderSide.none, // Remove border
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide.none,
                     ),
-                    prefixIcon: Padding(
-                      padding: const EdgeInsets.only(left: 15.0, right: 19),
-                      child: Icon(CupertinoIcons.padlock_solid,
-                          color: Color(0xFF0064F7)), // Lock icon
+                    prefixIcon: const Padding(
+                      padding: EdgeInsets.only(left: 15.0, right: 19),
+                      child:
+                          Icon(CupertinoIcons.lock, color: Color(0xFF0064F7)),
                     ),
                   ),
                   obscureText: true,
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 // Register button
                 ElevatedButton(
-                  onPressed: () {
-                    // Implement registration functionality
+                  onPressed: () async {
+                    if (passwordController.text ==
+                        confirmPasswordController.text) {
+                      try {
+                        // Create user with email and password in Firebase Auth
+                        UserCredential userCredential = await FirebaseAuth
+                            .instance
+                            .createUserWithEmailAndPassword(
+                          email: emailController.text,
+                          password: passwordController.text,
+                        );
+
+                        // Define default values for the user document
+                        Map<String, dynamic> defaultUserValues = {
+                          'name': nameController.text,
+                          'email': emailController.text,
+                          'role': 'user', // Default value
+                          'address': null, // Default value for 'address'
+                          'createdAt':
+                              FieldValue.serverTimestamp(), // Timestamp
+                          'dateOfBirth':
+                              null, // Default value for 'dateOfBirth'
+                          'gender': null, // Default value for 'gender'
+                          'phoneNumber':
+                              null, // Default value for 'phoneNumber'
+                          'profileImageUrl':
+                              null, // Default value for 'profileImageUrl'
+                        };
+
+                        // Save user data to Firestore
+                        await FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(userCredential.user!.uid)
+                            .set(defaultUserValues);
+
+                        // Navigate to a different page or show a success message
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Registration successful!')),
+                        );
+
+                        // Navigate to a different page if needed
+                        // Navigator.pushReplacementNamed(context, '/home');
+                      } catch (e) {
+                        // Handle errors
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Error: ${e.toString()}')),
+                        );
+                      }
+                    } else {
+                      // Show error if passwords do not match
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Passwords do not match')),
+                      );
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
-                    backgroundColor:
-                        Color(0xFF0064F7), // Button background color
-                    side: BorderSide(
-                        color: Color(0xFF0064F7),
-                        width: 1), // Button border color
-                    minimumSize: Size(double.infinity, 50), // Full-width button
+                    backgroundColor: const Color(0xFF0064F7),
+                    side: const BorderSide(color: Color(0xFF0064F7), width: 1),
+                    minimumSize: const Size(double.infinity, 50),
                   ),
-                  child: Text(
+                  child: const Text(
                     'Register',
                     style: TextStyle(
                       fontFamily: 'SFProDisplay',
@@ -116,19 +194,19 @@ class RegisterPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 // Login link
                 TextButton(
                   onPressed: () {
-                    Navigator.pop(context); // Navigate back to login page
+                    Navigator.pop(context);
                   },
-                  child: Text(
+                  child: const Text(
                     "Already have an account? Login here",
                     style: TextStyle(
                       fontFamily: 'SFProDisplay',
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
-                      color: Color(0xFF0064F7), // Link color
+                      color: Color(0xFF0064F7),
                     ),
                   ),
                 ),
