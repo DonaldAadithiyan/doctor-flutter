@@ -4,19 +4,19 @@ import 'package:flutter/material.dart';
 class CalendarPage extends StatelessWidget {
   final User? user; // Nullable user parameter
 
-  CalendarPage({this.user}); // Constructor with nullable user
+  const CalendarPage({this.user}); // Constructor with nullable user
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Calendar'),
+        title: const Text('Calendar'),
       ),
       body: Center(
         child: user != null
             ? Text(
                 'Welcome ${user!.email} to the Calendar Page') // Use the user object
-            : Text('Welcome to the Calendar Page'), // Default message
+            : const Text('Welcome to the Calendar Page'), // Default message
       ),
     );
   }

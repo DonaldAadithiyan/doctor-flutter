@@ -137,7 +137,7 @@ class RegisterPage extends StatelessWidget {
 
                         // Define default values for the user document
                         Map<String, dynamic> defaultUserValues = {
-                          'name': nameController.text,
+                          'displayName': nameController.text,
                           'email': emailController.text,
                           'role': 'user', // Default value
                           'address': null, // Default value for 'address'
@@ -149,7 +149,7 @@ class RegisterPage extends StatelessWidget {
                           'phoneNumber':
                               null, // Default value for 'phoneNumber'
                           'profileImageUrl':
-                              null, // Default value for 'profileImageUrl'
+                              "https://firebasestorage.googleapis.com/v0/b/docter-63df0.appspot.com/o/profileimages%2FProfile_avatar_placeholder_large.png?alt=media&token=69f5245e-8ca5-4a24-9e2f-2e2cbeef8584, // Default value for 'profileImageUrl"
                         };
 
                         // Save user data to Firestore

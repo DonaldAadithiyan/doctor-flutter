@@ -4,19 +4,19 @@ import 'package:flutter/material.dart';
 class ChatPage extends StatelessWidget {
   final User? user; // Nullable user parameter
 
-  ChatPage({this.user}); // Constructor with nullable user
+  const ChatPage({this.user}); // Constructor with nullable user
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chat'),
+        title: const Text('Chat'),
       ),
       body: Center(
         child: user != null
             ? Text(
                 'Welcome ${user!.email} to the Chat Page') // Use the user object
-            : Text('Welcome to the Chat Page'), // Default message
+            : const Text('Welcome to the Chat Page'), // Default message
       ),
     );
   }

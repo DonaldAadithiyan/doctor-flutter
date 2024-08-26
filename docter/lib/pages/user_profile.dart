@@ -10,13 +10,13 @@ class UserProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('User Profile'),
+        title: const Text('User Profile'),
       ),
       body: Center(
         child: user != null
             ? Text(
                 'Welcome ${user!.email} to the User Profile Page') // Use the user object
-            : Text('Welcome to the User Profile Page'), // Default message
+            : const Text('Welcome to the User Profile Page'), // Default message
       ),
     );
   }
