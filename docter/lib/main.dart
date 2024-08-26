@@ -26,16 +26,18 @@ class MyApp extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
-                child: CircularProgressIndicator(
-              color: Color(0xFF0064F7),
-            )); // Show a loading spinner while waiting
+              child: CircularProgressIndicator(
+                color: Color(0xFF0064F7),
+              ),
+            );
           }
           if (snapshot.hasData && snapshot.data != null) {
             // User is logged in
-            return NavigationBarPage(); // Redirect to NavigationBarPage
+            // Pass user data to NavigationBarPage
+            return NavigationBarPage(user: snapshot.data);
           } else {
             // User is not logged in
-            return WelcomePage(); // Redirect to WelcomePage
+            return WelcomePage();
           }
         },
       ),
@@ -43,7 +45,7 @@ class MyApp extends StatelessWidget {
         '/getstarted': (context) => GetStartedPage(),
         '/login': (context) => LoginPage(),
         '/register': (context) => RegisterPage(),
-        '/navigationBar': (context) => NavigationBarPage(),
+        // Remove the '/navigationBar' route since it's handled directly in `home`
       },
     );
   }
