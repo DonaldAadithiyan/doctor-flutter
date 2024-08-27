@@ -39,7 +39,7 @@ class _NavigationBarPageState extends State<NavigationBarPage> {
       try {
         // Fetch user role from Firestore
         final userDoc = await FirebaseFirestore.instance
-            .collection('user_profiles')
+            .collection('users')
             .doc(widget.user!.uid)
             .get();
 
@@ -72,7 +72,7 @@ class _NavigationBarPageState extends State<NavigationBarPage> {
     return Scaffold(
       body: _pages[_selectedIndex], // Display the selected page
       bottomNavigationBar: NavigationBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Color.fromARGB(255, 255, 255, 255),
         height: 70,
         elevation: 10,
         selectedIndex: _selectedIndex,
