@@ -72,7 +72,7 @@ class _NavigationBarPageState extends State<NavigationBarPage> {
     return Scaffold(
       body: _pages[_selectedIndex], // Display the selected page
       bottomNavigationBar: NavigationBar(
-        backgroundColor: Color.fromARGB(255, 255, 255, 255),
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         height: 70,
         elevation: 10,
         selectedIndex: _selectedIndex,
@@ -99,13 +99,13 @@ class _NavigationBarPageState extends State<NavigationBarPage> {
       icon: Icon(
         _selectedIndex == index ? iconClicked : icon,
         size: 28,
-        color: _selectedIndex == index ? Color(0xFF0064F7) : Colors.grey,
+        color: _selectedIndex == index ? const Color(0xFF0064F7) : Colors.grey,
       ),
       label: '',
       selectedIcon: Icon(
         iconClicked,
         size: 28,
-        color: Color(0xFF0064F7),
+        color: const Color(0xFF0064F7),
       ),
     );
   }
