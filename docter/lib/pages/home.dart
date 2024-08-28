@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../users/doctor.dart';
+import '../widgets/carousel_buttons.dart'; // Import the CarouselButtons widget
 
 class HomePage extends StatefulWidget {
   final User? user;
@@ -174,6 +175,20 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
             ),
+
+            // Add CarouselButtons here
+            const SizedBox(
+                height:
+                    15), // Add some spacing between the search bar and the carousel
+            CarouselButtons(
+              imageUrls: const [
+                'https://via.placeholder.com/600x300.png?text=Image+1',
+                'https://via.placeholder.com/600x300.png?text=Image+2',
+                'https://via.placeholder.com/600x300.png?text=Image+3',
+              ],
+              onPageChanged: (int index) {},
+            ),
+
             Visibility(
               visible: _isListVisible,
               child: StreamBuilder<QuerySnapshot>(
@@ -251,36 +266,8 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
             ),
-            Expanded(
-              child: Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => DetailsPage()),
-                    );
-                  },
-                  child: const Text('Go to Details'),
-                ),
-              ),
-            ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class DetailsPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Details'),
-        backgroundColor: Colors.red,
-      ),
-      body: const Center(
-        child: Text('Details Page'),
       ),
     );
   }
