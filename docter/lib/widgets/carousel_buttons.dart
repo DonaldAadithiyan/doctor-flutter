@@ -5,9 +5,14 @@ import 'package:carousel_slider/carousel_slider.dart';
 
 class CarouselButtons extends StatelessWidget {
   final List<String> imageUrls;
+  final List<Widget> pages; // Add this list to store pages
   final Function(int) onPageChanged;
 
-  CarouselButtons({required this.imageUrls, required this.onPageChanged});
+  CarouselButtons({
+    required this.imageUrls,
+    required this.pages, // Include pages in the constructor
+    required this.onPageChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +24,10 @@ class CarouselButtons extends StatelessWidget {
         viewportFraction: 0.9,
         onPageChanged: (index, reason) => onPageChanged(index),
       ),
-      items: imageUrls.map((imageUrl) {
+      items: imageUrls.asMap().entries.map((entry) {
+        int index = entry.key;
+        String imageUrl = entry.value;
+
         return Builder(
           builder: (BuildContext context) {
             return GestureDetector(
@@ -27,7 +35,8 @@ class CarouselButtons extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ImagePage(imageUrl: imageUrl),
+                    builder: (context) =>
+                        pages[index], // Navigate to the specific page
                   ),
                 );
               },
@@ -41,6 +50,8 @@ class CarouselButtons extends StatelessWidget {
                   child: Image.network(
                     imageUrl,
                     fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity,
                   ),
                 ),
               ),
@@ -48,24 +59,6 @@ class CarouselButtons extends StatelessWidget {
           },
         );
       }).toList(),
-    );
-  }
-}
-
-class ImagePage extends StatelessWidget {
-  final String imageUrl;
-
-  ImagePage({required this.imageUrl});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Image Details'),
-      ),
-      body: Center(
-        child: Image.network(imageUrl),
-      ),
     );
   }
 }
