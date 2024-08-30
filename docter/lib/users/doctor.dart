@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../widgets/horizontal_calendar.dart'; // Import the HorizontalCalendar
 
 class DoctorPage extends StatefulWidget {
   final QueryDocumentSnapshot doctor;
@@ -169,7 +170,7 @@ class _DoctorPageState extends State<DoctorPage> {
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: Colors.blue,
+                            color: Color(0xFF0064F7),
                           ),
                         ),
                       ],
@@ -190,7 +191,7 @@ class _DoctorPageState extends State<DoctorPage> {
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: Colors.blue,
+                            color: Color(0xFF0064F7),
                           ),
                         ),
                       ],
@@ -211,7 +212,7 @@ class _DoctorPageState extends State<DoctorPage> {
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: Colors.blue,
+                            color: Color(0xFF0064F7),
                           ),
                         ),
                       ],
@@ -231,7 +232,7 @@ class _DoctorPageState extends State<DoctorPage> {
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: Colors.blue,
+                            color: Color(0xFF0064F7),
                           ),
                         ),
                       ],
@@ -264,9 +265,9 @@ class _DoctorPageState extends State<DoctorPage> {
                 children: [
                   if (aboutMe.length > textLimit)
                     TextSpan(
-                      text: isExpanded ? ' See Less' : ' ... See More',
+                      text: isExpanded ? '  See Less' : ' ... See More',
                       style: const TextStyle(
-                        color: Colors.blue,
+                        color: Color(0xFF0064F7),
                         fontWeight: FontWeight.w600,
                       ),
                       recognizer: TapGestureRecognizer()
@@ -280,6 +281,8 @@ class _DoctorPageState extends State<DoctorPage> {
               ),
               textAlign: TextAlign.justify,
             ),
+            const SizedBox(height: 20), // Add some space before the calendar
+            HorizontalCalendar(doctor: widget.doctor), // Add the HorizontalCalendar widget here
           ],
         ),
       ),

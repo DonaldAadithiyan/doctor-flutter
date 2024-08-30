@@ -111,7 +111,7 @@ class LoginPage extends StatelessWidget {
                       } else {
                         // Handle case where user data does not exist
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('User data not found')),
+                          const SnackBar(content: Text('User data not found')),
                         );
                       }
                     } catch (e) {
