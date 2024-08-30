@@ -36,6 +36,8 @@ dependencies:
   cloud_firestore: ^5.2.1
   easy_search_bar: ^2.5.0
   carousel_slider: ^4.1.1
+  font_awesome_flutter: ^10.0.0
+  flutter_svg: ^1.1.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -59,6 +61,7 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^3.0.0
   flutter_launcher_icons: ^0.11.0
+  
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -75,6 +78,12 @@ flutter:
   assets:
     - assets/onboarding/welcome/logo.png
     - assets/profile_placeholder.png
+    - assets/icon/instagram.svg
+    - assets/icon/facebook.svg
+    - assets/icon/twitter.svg
+    - assets/icon/internet.png
+
+
     
 
   # An image asset can refer to one or more resolution-specific "variants", see
