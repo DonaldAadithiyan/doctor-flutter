@@ -11,7 +11,7 @@ class DoctorsListPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Doctors List',
+          'Our Specialists',
           style: TextStyle(
             fontFamily: 'SFProDisplay',
             fontSize: 18,

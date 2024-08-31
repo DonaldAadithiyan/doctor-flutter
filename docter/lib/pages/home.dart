@@ -1,3 +1,4 @@
+import 'package:docter/users/field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import '../home_carousel/carousel1.dart';
 import '../widgets/carousel_doctors.dart';
 import '../widgets/carousel_fields.dart';
 import 'doctor_list.dart';
+import 'field_list.dart';
 
 class HomePage extends StatefulWidget {
   final User? user;
@@ -77,6 +79,17 @@ class _HomePageState extends State<HomePage> {
     }
     return FirebaseFirestore.instance
         .collection('doctors')
+        .where('name', isGreaterThanOrEqualTo: query)
+        .limit(5)
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> _searchFields(String query) {
+    if (query.isEmpty) {
+      return const Stream.empty();
+    }
+    return FirebaseFirestore.instance
+        .collection('fields')
         .where('name', isGreaterThanOrEqualTo: query)
         .limit(5)
         .snapshots();
@@ -159,7 +172,7 @@ class _HomePageState extends State<HomePage> {
                 child: CupertinoSearchTextField(
                   controller: _searchController,
                   focusNode: _searchFocusNode,
-                  placeholder: 'Search for Doctors, Fields',
+                  placeholder: 'Search for Doctors,  Start with "@" for Fields',
                   placeholderStyle: const TextStyle(
                     fontFamily: 'SFProDisplay',
                     fontSize: 15,
@@ -184,7 +197,11 @@ class _HomePageState extends State<HomePage> {
               Visibility(
                 visible: _isListVisible,
                 child: StreamBuilder<QuerySnapshot>(
-                  stream: _searchDoctors(_searchQuery),
+                  stream: _searchQuery.isNotEmpty
+                      ? _searchQuery.contains('@') // Assuming @ is used for fields
+                          ? _searchFields(_searchQuery)
+                          : _searchDoctors(_searchQuery)
+                      : const Stream.empty(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
@@ -219,40 +236,61 @@ class _HomePageState extends State<HomePage> {
                           shrinkWrap: true,
                           itemCount: results.length,
                           itemBuilder: (context, index) {
-                            final doctor = results[index];
-                            final doctorData =
-                                doctor.data() as Map<String, dynamic>;
-                            return ListTile(
-                              minVerticalPadding: 3,
-                              leading: CircleAvatar(
-                                backgroundImage: doctorData[
-                                            'profileImageUrl'] !=
-                                        null
-                                    ? NetworkImage(
-                                        doctorData['profileImageUrl'])
-                                    : const AssetImage(
-                                            'assets/profile_placeholder.png')
-                                        as ImageProvider,
-                                radius: 20,
-                              ),
-                              title: Text(
-                                doctorData['name'],
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                              subtitle: Text(
-                                doctorData['specialization'],
-                                style: const TextStyle(fontSize: 13),
-                              ),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        DoctorPage(doctor: doctor),
-                                  ),
-                                );
-                              },
-                            );
+                            final data = results[index].data() as Map<String, dynamic>;
+
+                            if (data.containsKey('profileImageUrl')) { // Doctor
+                              return ListTile(
+                                minVerticalPadding: 3,
+                                leading: CircleAvatar(
+                                  backgroundImage: data['profileImageUrl'] != null
+                                      ? NetworkImage(data['profileImageUrl'])
+                                      : const AssetImage('assets/profile_placeholder.png') as ImageProvider,
+                                  radius: 20,
+                                ),
+                                title: Text(
+                                  data['name'],
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                                subtitle: Text(
+                                  data['specialization'],
+                                  style: const TextStyle(fontSize: 13),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => DoctorPage(
+                                          doctor: results[index]),
+                                    ),
+                                  );
+                                },
+                              );
+                            } else if (data.containsKey('icon')) { // Field
+                              return ListTile(
+                                minVerticalPadding: 3,
+                                leading: CircleAvatar(
+                                  backgroundImage: data['icon'] != null
+                                      ? NetworkImage(data['icon'])
+                                      : const AssetImage('assets/field_placeholder.png') as ImageProvider,
+                                  radius: 20,
+                                ),
+                                title: Text(
+                                  data['name'],
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => FieldPage(
+                                          field: results[index]),
+                                    ),
+                                  );
+                                },
+                              );
+                            } else {
+                              return const SizedBox.shrink();
+                            }
                           },
                         ),
                       ),
@@ -356,13 +394,13 @@ class _HomePageState extends State<HomePage> {
                       onTap: () {
                         // Handle the "See all" link tap here
                         // For example, you might navigate to another page
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) =>
-                        //         SeeAllSpecialistsPage(), // Replace with your target page
-                        //   ),
-                        // );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                FieldListPage(), // Replace with your target page
+                          ),
+                        );
                       },
                       child: const Text(
                         'See all',
