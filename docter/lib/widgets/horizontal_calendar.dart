@@ -53,7 +53,7 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
             itemCount: 1000, // Large number to simulate infinite scrolling
             itemBuilder: (context, index) {
               // Calculate the date based on the index
-              DateTime date = today.subtract(Duration(days: 3)).add(Duration(days: index));
+              DateTime date = today.subtract(const Duration(days: 3)).add(Duration(days: index));
               bool isUnavailable = _isDateUnavailable(date, unAvailableDates);
               bool isSelected = date.day == selectedDate.day &&
                                 date.month == selectedDate.month &&

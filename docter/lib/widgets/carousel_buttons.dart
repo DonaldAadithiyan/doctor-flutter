@@ -41,7 +41,7 @@ class CarouselButtons extends StatelessWidget {
                 );
               },
               child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 5.0),
+                margin: const EdgeInsets.symmetric(horizontal: 5.0),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
