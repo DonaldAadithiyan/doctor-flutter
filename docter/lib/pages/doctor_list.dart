@@ -24,7 +24,7 @@ class DoctorsListPage extends StatelessWidget {
         stream: FirebaseFirestore.instance.collection('doctors').snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator(color:Color(0xFF0064F7)));
           }
 
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
@@ -41,7 +41,7 @@ class DoctorsListPage extends StatelessWidget {
                 future: doctorData['default_location'].get(),
                 builder: (context, locationSnapshot) {
                   if (locationSnapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator(color:Color(0xFF0064F7)));
                   }
 
                   if (!locationSnapshot.hasData) {
