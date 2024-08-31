@@ -8,6 +8,7 @@ import '../widgets/carousel_buttons.dart'; // Import the CarouselButtons widget
 import '../home_carousel/carousel1.dart';
 import '../widgets/carousel_doctors.dart';
 import '../widgets/carousel_fields.dart';
+import 'doctor_list.dart';
 
 class HomePage extends StatefulWidget {
   final User? user;
@@ -305,13 +306,13 @@ class _HomePageState extends State<HomePage> {
                       onTap: () {
                         // Handle the "See all" link tap here
                         // For example, you might navigate to another page
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) =>
-                        //         SeeAllSpecialistsPage(), // Replace with your target page
-                        //   ),
-                        // );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                DoctorsListPage(), // Replace with your target page
+                          ),
+                        );
                       },
                       child: const Text(
                         'See all',

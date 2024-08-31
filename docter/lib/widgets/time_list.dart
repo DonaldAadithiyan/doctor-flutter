@@ -198,7 +198,7 @@ class _TimeListState extends State<TimeList> {
                             ? Color(0xFF0064F7)
                             : (isUnavailable
                                 ? Colors.black.withOpacity(0.2)
-                                : Colors.blue),
+                                : Color(0xFF0064F7)),
                       ),
                     ),
                     child: Center(
