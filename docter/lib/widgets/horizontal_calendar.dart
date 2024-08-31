@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'time_list.dart'; // Import TimeList
 
 class HorizontalCalendar extends StatefulWidget {
   final QueryDocumentSnapshot doctor;
@@ -18,19 +19,19 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
   @override
   Widget build(BuildContext context) {
     final doctorData = widget.doctor.data() as Map<String, dynamic>;
-    final Map<String, List<int>> unAvailableDates = 
-      (doctorData['unAvailableDates'] as Map<String, dynamic>).map(
-        (key, value) => MapEntry(
-          key,
-          (value as List).map((e) {
-            try {
-              return int.parse(e.toString());
-            } catch (e) {
-              return null;
-            }
-          }).where((e) => e != null).cast<int>().toList(),
-        ),
-      );
+    final Map<String, List<int>> unAvailableDates =
+        (doctorData['unAvailableDates'] as Map<String, dynamic>).map(
+      (key, value) => MapEntry(
+        key,
+        (value as List).map((e) {
+          try {
+            return int.parse(e.toString());
+          } catch (e) {
+            return null;
+          }
+        }).where((e) => e != null).cast<int>().toList(),
+      ),
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,7 +85,7 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
                           ? Colors.black.withOpacity(0.2)
                           : isSelected
                               ? Colors.transparent
-                              : Color(0xFF0064F7),
+                              : const Color(0xFF0064F7),
                     ),
                   ),
                   child: Column(
@@ -121,6 +122,12 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
             },
           ),
         ),
+        // Add the TimeList widget here, passing the necessary data
+        TimeList(
+          selectedMonth: DateFormat('MMMM').format(selectedDate),
+          selectedDate: selectedDate.day,
+          doctor: doctorData,
+        ),
       ],
     );
   }
@@ -132,4 +139,3 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
     return unavailableDates?.contains(date.day) ?? false;
   }
 }
-
