@@ -262,7 +262,7 @@ class AboutSection extends StatefulWidget {
 
 class _AboutSectionState extends State<AboutSection> {
   bool isExpanded = false;
-  final int textLimit = 100; // Set your desired character limit
+  final int textLimit = 150; // Set your desired character limit
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+import 'appointment_popup.dart';
 
 class TimeList extends StatefulWidget {
   final String selectedMonth;
@@ -230,10 +233,101 @@ class _TimeListState extends State<TimeList> {
             left: 20,
             right: 20,
             child: ElevatedButton(
-              onPressed: () {
-                print(
-                    'Appointment made for ${widget.selectedDate} ${widget.selectedMonth} at $selectedTimeSlot location: $location');
+              onPressed: () async {
+                try {
+                  // Get the current logged-in user
+                  User? user = FirebaseAuth.instance.currentUser;
+                  if (user == null) {
+                    print("No user is logged in");
+                    return;
+                  }
+
+                  // Convert selected date, month, and time slot to a DateTime object
+                  String timeSlot = selectedTimeSlot!;
+                  List<String> timeParts = timeSlot.split(" - ");
+                  int startHour = int.parse(timeParts[0].split(":")[0]);
+                  int startMinute = int.parse(timeParts[0].split(":")[1]);
+
+                  // Map month names to their respective numbers
+                  Map<String, int> monthMap = {
+                    'January': 1,
+                    'February': 2,
+                    'March': 3,
+                    'April': 4,
+                    'May': 5,
+                    'June': 6,
+                    'July': 7,
+                    'August': 8,
+                    'September': 9,
+                    'October': 10,
+                    'November': 11,
+                    'December': 12,
+                  };
+
+                  // Get the month number from the selected month name
+                  int monthNumber = monthMap[widget.selectedMonth]!;
+
+                  // Create a DateTime object for the appointment
+                  DateTime appointmentDateTime = DateTime(
+                    DateTime.now().year, // Assuming the current year
+                    monthNumber,
+                    widget.selectedDate,
+                    startHour,
+                    startMinute,
+                  );
+
+                  // Get the DocumentReference of the logged-in user
+                  DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
+
+                  // Get the DocumentReference of the doctor
+                  String doctorId = widget.doctor['id']; // Assuming 'id' is the key for the doctor's document ID in the map
+                  DocumentReference doctorRef = FirebaseFirestore.instance.collection('doctors').doc(doctorId);
+
+                  // Get the DocumentReference of the location
+                  DocumentReference? locationRef;
+                  if (location != null) {
+                    final locationQuerySnapshot = await FirebaseFirestore.instance
+                        .collection('locations')
+                        .where('name', isEqualTo: location)
+                        .limit(1)
+                        .get();
+
+                    if (locationQuerySnapshot.docs.isNotEmpty) {
+                      locationRef = locationQuerySnapshot.docs.first.reference;
+                    } else {
+                      print('Location not found in locations collection');
+                      return;
+                    }
+                  }
+
+                  // Create the appointment document
+                  await FirebaseFirestore.instance.collection('appointments').doc().set({
+                    'description': '',
+                    'doctor': doctorRef, // Reference to the doctor's document
+                    'status': 'reserved',
+                    'timestamp': appointmentDateTime,
+                    'user': userRef,
+                    'location': locationRef,
+                    'userFeedback': '',
+                  });
+
+                  print('Appointment made for ${widget.selectedDate} ${widget.selectedMonth} at $selectedTimeSlot location: $location');
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AppointmentPopup(
+                        date: '${widget.selectedDate} ${widget.selectedMonth}',
+                        timeSlot: selectedTimeSlot!,
+                        location: location!,
+                      );
+                    },
+                  );
+                } catch (e) {
+                  print('Error creating appointment: $e');
+                }
               },
+
+
               style: ElevatedButton.styleFrom(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 40, vertical: 15),

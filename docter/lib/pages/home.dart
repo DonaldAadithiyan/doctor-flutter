@@ -227,7 +227,7 @@ class _HomePageState extends State<HomePage> {
                             BoxShadow(
                               color: Colors.grey.withOpacity(0.5),
                               spreadRadius: 2,
-                              blurRadius: 5,
+                              blurRadius: 2,
                               offset: const Offset(0, 3),
                             ),
                           ],
@@ -249,11 +249,11 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 title: Text(
                                   data['name'],
-                                  style: const TextStyle(fontSize: 16),
+                                  style: const TextStyle(fontSize: 14),
                                 ),
                                 subtitle: Text(
                                   data['specialization'],
-                                  style: const TextStyle(fontSize: 13),
+                                  style: const TextStyle(fontSize: 12),
                                 ),
                                 onTap: () {
                                   Navigator.push(
@@ -272,11 +272,11 @@ class _HomePageState extends State<HomePage> {
                                   backgroundImage: data['icon'] != null
                                       ? NetworkImage(data['icon'])
                                       : const AssetImage('assets/field_placeholder.png') as ImageProvider,
-                                  radius: 20,
+                                  radius: 15,
                                 ),
                                 title: Text(
                                   data['name'],
-                                  style: const TextStyle(fontSize: 16),
+                                  style: const TextStyle(fontSize: 14),
                                 ),
                                 onTap: () {
                                   Navigator.push(
