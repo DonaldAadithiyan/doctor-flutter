@@ -23,6 +23,7 @@ class _TimeListState extends State<TimeList> {
   String? selectedTimeSlot;
   String? location;
   bool isLoadingLocation = true;
+  bool isLoadingAppointment = false;
 
   @override
   void initState() {
@@ -183,8 +184,8 @@ class _TimeListState extends State<TimeList> {
                             setState(() {
                               selectedTimeSlot = timeIntervals[index];
                             });
-                            await fetchSpecificLocation(
-                                index.toString()); // Fetch specific location for selected time slot
+                            await fetchSpecificLocation(index
+                                .toString()); // Fetch specific location for selected time slot
                           }
                         },
                   child: Container(
@@ -227,13 +228,27 @@ class _TimeListState extends State<TimeList> {
             ),
           ],
         ),
-        if (selectedTimeSlot != null && !isLoadingLocation)
+        if (isLoadingAppointment)
+          Container(
+            color: Colors.white.withOpacity(0.9),
+            height: 320,
+            child: const Center(
+              child: CircularProgressIndicator(
+                color: Color(0xFF0064F7),
+              ),
+            ),
+          )
+        else if (selectedTimeSlot != null && !isLoadingLocation)
           Positioned(
             bottom: 20,
             left: 20,
             right: 20,
             child: ElevatedButton(
               onPressed: () async {
+                setState(() {
+                  isLoadingAppointment = true;
+                });
+
                 try {
                   // Get the current logged-in user
                   User? user = FirebaseAuth.instance.currentUser;
@@ -277,16 +292,22 @@ class _TimeListState extends State<TimeList> {
                   );
 
                   // Get the DocumentReference of the logged-in user
-                  DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
+                  DocumentReference userRef = FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(user.uid);
 
                   // Get the DocumentReference of the doctor
-                  String doctorId = widget.doctor['id']; // Assuming 'id' is the key for the doctor's document ID in the map
-                  DocumentReference doctorRef = FirebaseFirestore.instance.collection('doctors').doc(doctorId);
+                  String doctorId = widget.doctor[
+                      'id']; // Assuming 'id' is the key for the doctor's document ID in the map
+                  DocumentReference doctorRef = FirebaseFirestore.instance
+                      .collection('doctors')
+                      .doc(doctorId);
 
                   // Get the DocumentReference of the location
                   DocumentReference? locationRef;
                   if (location != null) {
-                    final locationQuerySnapshot = await FirebaseFirestore.instance
+                    final locationQuerySnapshot = await FirebaseFirestore
+                        .instance
                         .collection('locations')
                         .where('name', isEqualTo: location)
                         .limit(1)
@@ -301,7 +322,10 @@ class _TimeListState extends State<TimeList> {
                   }
 
                   // Create the appointment document
-                  await FirebaseFirestore.instance.collection('appointments').doc().set({
+                  await FirebaseFirestore.instance
+                      .collection('appointments')
+                      .doc()
+                      .set({
                     'description': '',
                     'doctor': doctorRef, // Reference to the doctor's document
                     'status': 'reserved',
@@ -311,7 +335,11 @@ class _TimeListState extends State<TimeList> {
                     'userFeedback': '',
                   });
 
-                  print('Appointment made for ${widget.selectedDate} ${widget.selectedMonth} at $selectedTimeSlot location: $location');
+                  print(
+                      'Appointment made for ${widget.selectedDate} ${widget.selectedMonth} at $selectedTimeSlot location: $location');
+                  setState(() {
+                    isLoadingAppointment = false;
+                  });
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
@@ -324,10 +352,11 @@ class _TimeListState extends State<TimeList> {
                   );
                 } catch (e) {
                   print('Error creating appointment: $e');
+                  setState(() {
+                    isLoadingAppointment = false;
+                  });
                 }
               },
-
-
               style: ElevatedButton.styleFrom(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 40, vertical: 15),

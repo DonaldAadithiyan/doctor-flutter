@@ -16,7 +16,7 @@ class AppointmentPopup extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(25),
       ),
       title: const Text(
         'Appointment Confirmed',
@@ -46,11 +46,28 @@ class AppointmentPopup extends StatelessWidget {
         ],
       ),
       actions: [
-        ElevatedButton(
-          onPressed: () {
-            Navigator.of(context).pop(); // Dismiss the dialog
-          },
-          child: const Text('OK'),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () {
+            Navigator.pop(context);
+            Navigator.pop(context);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xFF0064F7), // Set the button color
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25),
+              ),
+            ),
+            child: const Text(
+              'OK',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white
+              ),
+            ),
+          ),
         ),
       ],
     );
