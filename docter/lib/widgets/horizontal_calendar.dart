@@ -6,7 +6,7 @@ import 'time_list.dart'; // Import TimeList
 class HorizontalCalendar extends StatefulWidget {
   final QueryDocumentSnapshot doctor;
 
-  const HorizontalCalendar({Key? key, required this.doctor}) : super(key: key);
+  const HorizontalCalendar({super.key, required this.doctor});
 
   @override
   _HorizontalCalendarState createState() => _HorizontalCalendarState();
