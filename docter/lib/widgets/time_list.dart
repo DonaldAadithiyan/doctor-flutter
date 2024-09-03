@@ -9,7 +9,7 @@ class TimeList extends StatefulWidget {
   final int selectedDate;
   final Map<String, dynamic> doctor;
 
-  const TimeList({
+  const TimeList({super.key, 
     required this.selectedMonth,
     required this.selectedDate,
     required this.doctor,
@@ -131,9 +131,9 @@ class _TimeListState extends State<TimeList> {
               const Row(
                 children: [
                   SizedBox(
-                    child: CircularProgressIndicator(color: Color(0xFF979797)),
                     width: 10,
                     height: 10,
+                    child: CircularProgressIndicator(color: Color(0xFF979797)),
                   ),
                   SizedBox(width: 10),
                   Text(
@@ -192,17 +192,17 @@ class _TimeListState extends State<TimeList> {
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? Color(0xFF0064F7)
+                          ? const Color(0xFF0064F7)
                           : (isUnavailable
                               ? Colors.white.withOpacity(0.2)
                               : Colors.white),
                       borderRadius: BorderRadius.circular(15),
                       border: Border.all(
                         color: isSelected
-                            ? Color(0xFF0064F7)
+                            ? const Color(0xFF0064F7)
                             : (isUnavailable
                                 ? Colors.black.withOpacity(0.2)
-                                : Color(0xFF0064F7)),
+                                : const Color(0xFF0064F7)),
                       ),
                     ),
                     child: Center(
@@ -214,7 +214,7 @@ class _TimeListState extends State<TimeList> {
                             color: isSelected
                                 ? Colors.white
                                 : (isUnavailable
-                                    ? Color(0xFF979797).withOpacity(0.3)
+                                    ? const Color(0xFF979797).withOpacity(0.3)
                                     : Colors.black),
                             fontSize: 14,
                           ),
@@ -360,7 +360,7 @@ class _TimeListState extends State<TimeList> {
               style: ElevatedButton.styleFrom(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                backgroundColor: Color(0xFF0064F7),
+                backgroundColor: const Color(0xFF0064F7),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),

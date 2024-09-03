@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class DoctorProfilePage extends StatelessWidget {
   final User? user; // Nullable user parameter
 
-  const DoctorProfilePage({this.user}); // Constructor with nullable user
+  const DoctorProfilePage({super.key, this.user}); // Constructor with nullable user
 
   @override
   Widget build(BuildContext context) {

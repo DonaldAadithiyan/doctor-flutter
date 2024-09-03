@@ -15,7 +15,7 @@ import 'field_list.dart';
 class HomePage extends StatefulWidget {
   final User? user;
 
-  HomePage({this.user});
+  const HomePage({super.key, this.user});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -309,7 +309,7 @@ class _HomePageState extends State<HomePage> {
                   'https://firebasestorage.googleapis.com/v0/b/docter-63df0.appspot.com/o/home_carousel%2Fpremium_photo-1661766718556-13c2efac1388.webp?alt=media&token=7fc380f8-28b0-45f5-92e3-3184c71073e6',
                 ],
                 onPageChanged: (int index) {},
-                pages: [
+                pages: const [
                   Carousel1(
                       imageUrl:
                           'https://firebasestorage.googleapis.com/v0/b/docter-63df0.appspot.com/o/home_carousel%2Fphoto-1551601651-2a8555f1a136.webp?alt=media&token=b11964ff-d9d3-4e8d-8035-77f35cb27d5c'),
@@ -348,7 +348,7 @@ class _HomePageState extends State<HomePage> {
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                                DoctorsListPage(), // Replace with your target page
+                                const DoctorsListPage(), // Replace with your target page
                           ),
                         );
                       },
@@ -371,7 +371,7 @@ class _HomePageState extends State<HomePage> {
               Container(
                   padding: const EdgeInsets.only(left: 10),
                   child:
-                      CarouselDoctors()), // This will show the horizontal scrolling list of doctors
+                      const CarouselDoctors()), // This will show the horizontal scrolling list of doctors
 
               const SizedBox(height: 15),
               Row(
@@ -398,7 +398,7 @@ class _HomePageState extends State<HomePage> {
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                                FieldListPage(), // Replace with your target page
+                                const FieldListPage(), // Replace with your target page
                           ),
                         );
                       },
@@ -420,7 +420,7 @@ class _HomePageState extends State<HomePage> {
               Container(
                   padding: const EdgeInsets.only(left: 10),
                   child:
-                      CarouselFields()), // This will show the horizontal scrolling list of doctors
+                      const CarouselFields()), // This will show the horizontal scrolling list of doctors
               const SizedBox(height: 20),
             ],
           ),

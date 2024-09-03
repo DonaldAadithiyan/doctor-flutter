@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class Carousel1 extends StatelessWidget {
   final String imageUrl;
 
-  Carousel1({required this.imageUrl});
+  const Carousel1({super.key, required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {

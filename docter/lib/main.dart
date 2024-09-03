@@ -12,10 +12,12 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -37,15 +39,16 @@ class MyApp extends StatelessWidget {
             return NavigationBarPage(user: snapshot.data);
           } else {
             // User is not logged in
-            return WelcomePage();
+            return const WelcomePage();
           }
         },
       ),
       routes: {
-        '/getstarted': (context) => GetStartedPage(),
+        '/getstarted': (context) => const GetStartedPage(),
         '/login': (context) => LoginPage(),
         '/register': (context) => RegisterPage(),
-        // Remove the '/navigationBar' route since it's handled directly in `home`
+        ''
+        '/navigationBar': (context) => const NavigationBarPage(user: null),
       },
     );
   }

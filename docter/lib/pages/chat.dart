@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class ChatPage extends StatelessWidget {
   final User? user; // Nullable user parameter
 
-  const ChatPage({this.user}); // Constructor with nullable user
+  const ChatPage({super.key, this.user}); // Constructor with nullable user
 
   @override
   Widget build(BuildContext context) {

@@ -10,6 +10,8 @@ class RegisterPage extends StatelessWidget {
       TextEditingController();
   final TextEditingController nameController = TextEditingController();
 
+  RegisterPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -149,7 +151,7 @@ class RegisterPage extends StatelessWidget {
                           'phoneNumber':
                               null, // Default value for 'phoneNumber'
                           'profileImageUrl':
-                              "https://firebasestorage.googleapis.com/v0/b/docter-63df0.appspot.com/o/profileimages%2FProfile_avatar_placeholder_large.png?alt=media&token=69f5245e-8ca5-4a24-9e2f-2e2cbeef8584, // Default value for 'profileImageUrl"
+                              "https://firebasestorage.googleapis.com/v0/b/docter-63df0.appspot.com/o/profileimages%2FProfile_avatar_placeholder_large.png?alt=media&token=69f5245e-8ca5-4a24-9e2f-2e2cbeef8584"
                         };
 
                         // Save user data to Firestore

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 
 class WelcomePage extends StatefulWidget {
+  const WelcomePage({super.key});
+
   @override
   _WelcomePageState createState() => _WelcomePageState();
 }
@@ -32,7 +33,7 @@ class _WelcomePageState extends State<WelcomePage> {
             ), // Your image asset
             const Text(
               'Docter',
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: 'SFProDisplay',
                 fontWeight: FontWeight.w400,
                 fontSize: 30, // Text size

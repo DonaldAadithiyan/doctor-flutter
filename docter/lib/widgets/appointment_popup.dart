@@ -6,11 +6,11 @@ class AppointmentPopup extends StatelessWidget {
   final String location;
 
   const AppointmentPopup({
-    Key? key,
+    super.key,
     required this.date,
     required this.timeSlot,
     required this.location,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +54,7 @@ class AppointmentPopup extends StatelessWidget {
             Navigator.pop(context);
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFF0064F7), // Set the button color
+              backgroundColor: const Color(0xFF0064F7), // Set the button color
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(25),
               ),

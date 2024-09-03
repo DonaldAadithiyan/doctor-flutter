@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../users/doctor.dart';
 
 class CarouselDoctors extends StatelessWidget {
+  const CarouselDoctors({super.key});
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(

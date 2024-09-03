@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../users/field.dart'; // Import the FieldPage
 
 class CarouselFields extends StatelessWidget {
+  const CarouselFields({super.key});
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(

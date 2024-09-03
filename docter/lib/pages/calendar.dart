@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class CalendarPage extends StatelessWidget {
   final User? user; // Nullable user parameter
 
-  const CalendarPage({this.user}); // Constructor with nullable user
+  const CalendarPage({super.key, this.user}); // Constructor with nullable user
 
   @override
   Widget build(BuildContext context) {

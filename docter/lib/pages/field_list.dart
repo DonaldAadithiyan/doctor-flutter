@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../users/field.dart'; // Import the FieldPage
 
 class FieldListPage extends StatelessWidget {
-  const FieldListPage({Key? key}) : super(key: key);
+  const FieldListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +33,7 @@ class FieldListPage extends StatelessWidget {
           return ListView.builder(
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index) {
-              final field = snapshot.data!.docs[index] as QueryDocumentSnapshot<Object?>;
+              final field = snapshot.data!.docs[index];
               final fieldData = field.data() as Map<String, dynamic>?;
 
               final icon = fieldData?['icon'] as String? ?? 'https://example.com/default-icon.png';

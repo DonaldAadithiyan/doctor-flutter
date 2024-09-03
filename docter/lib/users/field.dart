@@ -7,7 +7,7 @@ import 'package:flutter/gestures.dart';
 class FieldPage extends StatelessWidget {
   final QueryDocumentSnapshot<Object?> field;
 
-  const FieldPage({Key? key, required this.field}) : super(key: key);
+  const FieldPage({super.key, required this.field});
 
   @override
   Widget build(BuildContext context) {
@@ -254,7 +254,7 @@ class FieldPage extends StatelessWidget {
 class AboutSection extends StatefulWidget {
   final String aboutMe;
 
-  const AboutSection({Key? key, required this.aboutMe}) : super(key: key);
+  const AboutSection({super.key, required this.aboutMe});
 
   @override
   _AboutSectionState createState() => _AboutSectionState();

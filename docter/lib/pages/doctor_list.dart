@@ -4,7 +4,7 @@ import '../users/doctor.dart'; // Import the DoctorPage
 import 'package:flutter/cupertino.dart';
 
 class DoctorsListPage extends StatelessWidget {
-  const DoctorsListPage({Key? key}) : super(key: key);
+  const DoctorsListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -144,10 +144,10 @@ class DoctorsListPage extends StatelessWidget {
                                 Container(
                                   padding: const EdgeInsets.all(8.0),
                                   decoration: BoxDecoration(
-                                    color: Color(0xFFF6F7F9),
+                                    color: const Color(0xFFF6F7F9),
                                     borderRadius: BorderRadius.circular(8.0),
                                     border: Border.all(
-                                      color: Color(0xFFF6F7F9).withOpacity(0.9),
+                                      color: const Color(0xFFF6F7F9).withOpacity(0.9),
                                     ),
                                   ),
                                   child: Column(
@@ -155,7 +155,7 @@ class DoctorsListPage extends StatelessWidget {
                                     children: [
                                       Row(
                                         children: [
-                                          Icon(CupertinoIcons.location_solid,
+                                          const Icon(CupertinoIcons.location_solid,
                                           color: Color(0xFF0064F7),
                                           size: 12),
                                           const SizedBox(width: 8),

@@ -24,7 +24,7 @@ class _DoctorPageState extends State<DoctorPage> {
         doctorData['socialMediaLinks'] as Map<String, dynamic>?;
 
     final String aboutMe = doctorData['AboutMe'] ?? 'No information available';
-    final int textLimit = 140; // Character limit for the truncated text
+    const int textLimit = 140; // Character limit for the truncated text
 
     return Scaffold(
       appBar: AppBar(
@@ -89,7 +89,7 @@ class _DoctorPageState extends State<DoctorPage> {
                               ),
                               Container(
                                 decoration: BoxDecoration(
-                                  color: Color(0xFFF6F7F9).withOpacity(0.1),
+                                  color: const Color(0xFFF6F7F9).withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(0),
                                   boxShadow: [
                                     BoxShadow(

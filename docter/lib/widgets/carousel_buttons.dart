@@ -8,7 +8,7 @@ class CarouselButtons extends StatelessWidget {
   final List<Widget> pages; // Add this list to store pages
   final Function(int) onPageChanged;
 
-  CarouselButtons({
+  const CarouselButtons({super.key, 
     required this.imageUrls,
     required this.pages, // Include pages in the constructor
     required this.onPageChanged,

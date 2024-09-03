@@ -11,7 +11,7 @@ import 'pages/user_profile.dart';
 class NavigationBarPage extends StatefulWidget {
   final User? user; // Add user as a parameter
 
-  NavigationBarPage({required this.user}); // Update constructor
+  const NavigationBarPage({super.key, required this.user}); // Update constructor
 
   @override
   _NavigationBarPageState createState() => _NavigationBarPageState();
