@@ -361,7 +361,7 @@ class _TimeListState extends State<TimeList> {
                   await appointmentRef.set({
                     'description': '',
                     'doctor': doctorRef,
-                    'status': 'reserved',
+                    'status': 'Reserved',
                     'timestamp': appointmentDateTime,
                     'user': userRef,
                     'location': locationRef,

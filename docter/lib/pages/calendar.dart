@@ -17,6 +17,7 @@ class CalendarPage extends StatefulWidget {
 class _CalendarPageState extends State<CalendarPage> {
   DateTime _selectedDay = DateTime.now();
   List<DocumentReference> appointments = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -55,6 +56,10 @@ class _CalendarPageState extends State<CalendarPage> {
         }
       } catch (e) {
         print("Error fetching appointments: $e");
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
@@ -71,11 +76,42 @@ class _CalendarPageState extends State<CalendarPage> {
         date.day == _selectedDay.day;
   }
 
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'Reserved':
+        return Colors.amber;
+      case 'Finished':
+        return Colors.green;
+      case 'Cancelled':
+        return Colors.red;
+      default:
+        return Colors.grey; // Default color if status is unknown
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Calendar'),
+        title: const Padding(
+          padding: EdgeInsets.only(left: 8.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Calendar',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
       body: Column(
         children: [
@@ -97,155 +133,209 @@ class _CalendarPageState extends State<CalendarPage> {
                   size: 15,
                 ),
               ),
+              calendarStyle: const CalendarStyle(
+                selectedDecoration: BoxDecoration(
+                  color: Color(0xFF0064F7), // Background color for the selected day
+                  shape: BoxShape.circle, // Shape of the selected day indicator
+                ),
+                selectedTextStyle: TextStyle(
+                  color: Colors.white, // Text color for the selected day
+                ),
+              ),
               firstDay: DateTime.utc(2010, 10, 16),
               lastDay: DateTime.utc(2030, 3, 14),
               focusedDay: DateTime.now(),
               availableGestures: AvailableGestures.all,
               onDaySelected: _onDaySelected,
-              selectedDayPredicate: (day) => isSameDay(day, _selectedDay),
+              selectedDayPredicate: (day) => _isSameDay(day),
             ),
           ),
-          Expanded(
-            child: appointments.isNotEmpty
-                ? ListView.builder(
-                    itemCount: appointments.length,
-                    itemBuilder: (context, index) {
-                      final appointmentRef = appointments[index];
+          _isLoading
+              ? const Center(child: CircularProgressIndicator(color: Color(0xFF0064F7)))
+              : Expanded(
+                  child: appointments.isNotEmpty
+                      ? FutureBuilder(
+                          future: Future.wait(appointments.map((appointmentRef) => appointmentRef.get())),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return const Center(child: CircularProgressIndicator(color: Color(0xFF0064F7)));
+                            }
 
-                      return FutureBuilder<DocumentSnapshot>(
-                        future: appointmentRef.get(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return const Center(child: CircularProgressIndicator());
-                          }
+                            if (snapshot.hasError || !snapshot.hasData || snapshot.data == null) {
+                              return const Center(child: Text('No appointments', style: TextStyle(color: Color(0xFF0064F7))));
+                            }
 
-                          if (snapshot.hasError) {
-                            return const Text('Error loading appointment');
-                          }
+                            List<DocumentSnapshot> appointmentSnapshots = snapshot.data! as List<DocumentSnapshot>;
 
-                          if (!snapshot.hasData || snapshot.data == null) {
-                            return const Text('No appointment data found');
-                          }
+                            // Flag to track if any appointment matches the selected date
+                            bool hasAppointmentOnSelectedDate = false;
 
-                          final appointmentData =
-                              snapshot.data!.data() as Map<String, dynamic>;
-                          final timestamp =
-                              (appointmentData['timestamp'] as Timestamp).toDate();
+                            List<Widget> appointmentWidgets = appointmentSnapshots.map((appointmentSnapshot) {
+                              if (!appointmentSnapshot.exists) return const SizedBox.shrink();
 
-                          if (_isSameDay(timestamp)) {
-                            final doctorRef = appointmentData['doctor'];
-                            final locationRef = appointmentData['location'];
+                              final appointmentData = appointmentSnapshot.data() as Map<String, dynamic>;
+                              final timestamp = (appointmentData['timestamp'] as Timestamp).toDate();
 
-                            return FutureBuilder<DocumentSnapshot>(
-                              future: doctorRef.get(),
-                              builder: (context, doctorSnapshot) {
-                                if (doctorSnapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return const Center(
-                                      child: CircularProgressIndicator());
-                                }
+                              if (_isSameDay(timestamp)) {
+                                hasAppointmentOnSelectedDate = true; // Set flag if an appointment matches the date
 
-                                if (!doctorSnapshot.hasData ||
-                                    doctorSnapshot.data == null) {
-                                  return const Text('No doctor data found');
-                                }
-
-                                final doctorData = doctorSnapshot.data!.data()
-                                    as Map<String, dynamic>;
-                                final profileImageUrl =
-                                    doctorData['profileImageUrl'];
-                                final doctorName = doctorData['name'];
-                                final specialization =
-                                    doctorData['specialization'];
+                                final doctorRef = appointmentData['doctor'];
+                                final locationRef = appointmentData['location'];
+                                final status = appointmentData['status'] ?? 'unknown';
 
                                 return FutureBuilder<DocumentSnapshot>(
-                                  future: locationRef.get(),
-                                  builder: (context, locationSnapshot) {
-                                    if (locationSnapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const Center(
-                                          child: CircularProgressIndicator());
+                                  future: doctorRef.get(),
+                                  builder: (context, doctorSnapshot) {
+                                    if (!doctorSnapshot.hasData || doctorSnapshot.data == null) {
+                                      return const SizedBox.shrink();
                                     }
 
-                                    if (!locationSnapshot.hasData ||
-                                        locationSnapshot.data == null) {
-                                      return const Text('No location data found');
-                                    }
+                                    final doctorData = doctorSnapshot.data!.data() as Map<String, dynamic>;
+                                    final profileImageUrl = doctorData['profileImageUrl'];
+                                    final doctorName = doctorData['name'];
+                                    final specialization = doctorData['specialization'];
 
-                                    final locationData =
-                                        locationSnapshot.data!.data()
-                                            as Map<String, dynamic>;
-                                    final locationName = locationData['name'];
+                                    return FutureBuilder<DocumentSnapshot>(
+                                      future: locationRef.get(),
+                                      builder: (context, locationSnapshot) {
+                                        if (!locationSnapshot.hasData || locationSnapshot.data == null) {
+                                          return const SizedBox.shrink();
+                                        }
 
-                                    return GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                AppointmentPage(
-                                                    appointment:
-                                                        snapshot.data),
+                                        final locationData = locationSnapshot.data!.data() as Map<String, dynamic>;
+                                        final locationName = locationData['name'];
+
+                                        return GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => AppointmentPage(appointment: appointmentSnapshot),
+                                              ),
+                                            );
+                                          },
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 8, bottom: 8),
+                                            child: Container(
+                                              margin: const EdgeInsets.symmetric(vertical: 2.0),
+                                              padding: const EdgeInsets.all(4.0),
+                                              decoration: BoxDecoration(
+                                                border: Border.all(color: Colors.grey.withOpacity(0.8), width: 0.3),
+                                                borderRadius: BorderRadius.circular(12.0),
+                                              ),
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Stack(
+                                                    children: [
+                                                      Positioned(
+                                                        right: 0,
+                                                        top: 0,
+                                                        child: Container(
+																													height: 30,
+																													width: 80,
+																													padding: const EdgeInsets.all(4.0),
+																													decoration: BoxDecoration(
+																														borderRadius: BorderRadius.circular(8.0),
+																													),
+																													child: Center( // Center the text inside the container
+																														child: Text(
+																															'$status',
+																															style: TextStyle(
+																																color: _getStatusColor(status), // Text color according to the status
+																																fontSize: 14,
+																																fontWeight: FontWeight.w700,
+																															),
+																														),
+																													),
+																												),
+                                                      ),
+                                                      ListTile(
+                                                        contentPadding: EdgeInsets.zero,
+                                                        leading: CircleAvatar(
+                                                          backgroundImage: NetworkImage(profileImageUrl),
+                                                          radius: 35,
+                                                        ),
+                                                        title: Text(
+                                                          doctorName,
+                                                          style: const TextStyle(
+                                                            fontWeight: FontWeight.bold,
+                                                            fontSize: 15,
+                                                          ),
+                                                        ),
+                                                        subtitle: Text(
+                                                          specialization,
+                                                          style: const TextStyle(
+                                                            fontSize: 12,
+                                                            color: Colors.grey,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 5),
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween, // Space the pairs evenly
+                                                      children: [
+                                                        // First Pair: Calendar icon and date text
+                                                        Row(
+                                                          children: [
+                                                            const Icon(CupertinoIcons.calendar_today, color: Color(0xFF0064F7)),
+                                                            const SizedBox(width: 4), // Slight spacing between icon and text
+                                                            Text(
+                                                              '${timestamp.day}/${timestamp.month}/${timestamp.year}',
+                                                              style: const TextStyle(fontSize: 14),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        // Second Pair: Time icon and time text
+                                                        Row(
+                                                          children: [
+                                                            const Icon(CupertinoIcons.time, color: Color(0xFF0064F7)),
+                                                            const SizedBox(width: 4), // Slight spacing between icon and text
+                                                            Text(
+                                                              '${timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')}',
+                                                              style: const TextStyle(fontSize: 14),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        // Third Pair: Location icon and location name
+                                                        Row(
+                                                          children: [
+                                                            const Icon(CupertinoIcons.location, color: Color(0xFF0064F7)),
+                                                            const SizedBox(width: 4), // Slight spacing between icon and text
+                                                            Text(
+                                                              locationName,
+                                                              style: const TextStyle(fontSize: 14),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
                                           ),
                                         );
                                       },
-                                      child: Container(
-                                        margin: const EdgeInsets.symmetric(
-                                            vertical: 8.0),
-                                        padding: const EdgeInsets.all(8.0),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(color: Colors.grey),
-                                          borderRadius:
-                                              BorderRadius.circular(8.0),
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            ListTile(
-                                              contentPadding: EdgeInsets.zero,
-                                              leading: CircleAvatar(
-                                                backgroundImage:
-                                                    NetworkImage(profileImageUrl),
-                                              ),
-                                              title: Text(doctorName),
-                                              subtitle: Text(specialization),
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Row(
-                                              children: [
-                                                const Icon(Icons.calendar_today),
-                                                const SizedBox(width: 4),
-                                                Text(
-                                                  '${timestamp.day}/${timestamp.month}/${timestamp.year}',
-                                                ),
-                                                const Icon(Icons.access_time),
-                                                const SizedBox(width: 4),
-                                                Text(
-                                                  '${timestamp.hour}:${timestamp.minute}',
-                                                ),
-                                                const Icon(Icons.location_on),
-                                                const SizedBox(width: 4),
-                                                Text(locationName),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
                                     );
                                   },
                                 );
-                              },
-                            );
-                          } else {
-                            return Container(); // No appointment for this day
-                          }
-                        },
-                      );
-                    },
-                  )
-                : const Center(child: Text('No appointments')),
-          ),
+                              } else {
+                                return const SizedBox.shrink();
+                              }
+                            }).toList();
+
+                            return hasAppointmentOnSelectedDate
+                                ? ListView(children: appointmentWidgets)
+                                : const Center(child: Text('No appointments on selected date', style: TextStyle(color: Color(0xFF0064F7))));
+                          },
+                        )
+                      : const Center(child: Text('No appointments found', style: TextStyle(color: Color(0xFF0064F7)))),
+                ),
         ],
       ),
     );
