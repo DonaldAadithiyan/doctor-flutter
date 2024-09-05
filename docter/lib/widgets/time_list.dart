@@ -6,10 +6,11 @@ import 'appointment_popup.dart';
 
 class TimeList extends StatefulWidget {
   final String selectedMonth;
-  final int selectedDate;
+  dynamic selectedDate;
   final Map<String, dynamic> doctor;
 
-  const TimeList({super.key, 
+  TimeList({
+    super.key,
     required this.selectedMonth,
     required this.selectedDate,
     required this.doctor,
@@ -25,10 +26,53 @@ class _TimeListState extends State<TimeList> {
   bool isLoadingLocation = true;
   bool isLoadingAppointment = false;
 
+  final List<String> timeIntervals = [
+    '9:00 - 10:00',
+    '10:00 - 11:00',
+    '11:00 - 12:00',
+    '15:00 - 16:00',
+    '16:00 - 17:00',
+    '17:00 - 18:00',
+    '18:00 - 19:00',
+    '19:00 - 20:00',
+    '20:00 - 21:00',
+    '21:00 - 22:00',
+  ];
+
   @override
   void initState() {
     super.initState();
+    checkAndSetNextAvailableDate();
     fetchDefaultLocation(); // Fetch the default location initially
+  }
+
+  Future<void> checkAndSetNextAvailableDate() async {
+    final Map<String, dynamic> unavailableHours =
+        widget.doctor['unavailableHours'] as Map<String, dynamic>? ?? {};
+
+    final monthUnavailableHours =
+        unavailableHours[widget.selectedMonth] as Map<String, dynamic>?;
+
+    final List<dynamic>? unavailableTimeSlots =
+        monthUnavailableHours?[widget.selectedDate.toString()]
+            as List<dynamic>?;
+
+    if (unavailableTimeSlots != null &&
+        unavailableTimeSlots.length == timeIntervals.length) {
+      // If all time slots are unavailable for the selected date, find the next available date
+      for (int i = widget.selectedDate + 1; i <= 31; i++) {
+        final nextDayUnavailableTimeSlots =
+            monthUnavailableHours?[i.toString()] as List<dynamic>?;
+        if (nextDayUnavailableTimeSlots == null ||
+            nextDayUnavailableTimeSlots.length != timeIntervals.length) {
+          // Found a date with available slots
+          setState(() {
+            widget.selectedDate = i;
+          });
+          break;
+        }
+      }
+    }
   }
 
   Future<void> fetchDefaultLocation() async {
@@ -98,19 +142,6 @@ class _TimeListState extends State<TimeList> {
     final List<dynamic>? unavailableTimeSlots =
         monthUnavailableHours?[widget.selectedDate.toString()]
             as List<dynamic>?;
-
-    final List<String> timeIntervals = [
-      '9:00 - 10:00',
-      '10:00 - 11:00',
-      '11:00 - 12:00',
-      '15:00 - 16:00',
-      '16:00 - 17:00',
-      '17:00 - 18:00',
-      '18:00 - 19:00',
-      '19:00 - 20:00',
-      '20:00 - 21:00',
-      '21:00 - 22:00',
-    ];
 
     return Stack(
       children: [
@@ -264,7 +295,7 @@ class _TimeListState extends State<TimeList> {
                   int startMinute = int.parse(timeParts[0].split(":")[1]);
 
                   // Map month names to their respective numbers
-                  Map<String, int> monthMap = {
+                  final Map<String, int> monthMap = {
                     'January': 1,
                     'February': 2,
                     'March': 3,
@@ -322,18 +353,34 @@ class _TimeListState extends State<TimeList> {
                   }
 
                   // Create the appointment document
-                  await FirebaseFirestore.instance
+                  // Create the appointment document and get the document reference
+                  DocumentReference appointmentRef = await FirebaseFirestore
+                      .instance
                       .collection('appointments')
-                      .doc()
-                      .set({
+                      .doc();
+                  await appointmentRef.set({
                     'description': '',
-                    'doctor': doctorRef, // Reference to the doctor's document
+                    'doctor': doctorRef,
                     'status': 'reserved',
                     'timestamp': appointmentDateTime,
                     'user': userRef,
                     'location': locationRef,
                     'userFeedback': '',
                   });
+
+                  // Add the appointment reference to the user's 'appointments' array
+                  await userRef.update({
+                    'appointments': FieldValue.arrayUnion([appointmentRef]),
+                  });
+                  print("user ku appointment added");
+
+                  print(doctorRef);
+                  // Add the appointment reference to the doctor's 'appointments' array
+                  await doctorRef.update({
+                    'appointments': FieldValue.arrayUnion([appointmentRef]),
+                  });
+                  
+                  print("dcotor ku appointment added");
 
                   print(
                       'Appointment made for ${widget.selectedDate} ${widget.selectedMonth} at $selectedTimeSlot location: $location');
