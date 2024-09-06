@@ -354,7 +354,7 @@ class _TimeListState extends State<TimeList> {
 
                   // Create the appointment document
                   // Create the appointment document and get the document reference
-                  DocumentReference appointmentRef = await FirebaseFirestore
+                  DocumentReference appointmentRef = FirebaseFirestore
                       .instance
                       .collection('appointments')
                       .doc();

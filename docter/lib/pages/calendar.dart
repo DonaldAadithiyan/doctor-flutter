@@ -165,7 +165,7 @@ class _CalendarPageState extends State<CalendarPage> {
                               return const Center(child: Text('No appointments', style: TextStyle(color: Color(0xFF0064F7))));
                             }
 
-                            List<DocumentSnapshot> appointmentSnapshots = snapshot.data! as List<DocumentSnapshot>;
+                            List<DocumentSnapshot> appointmentSnapshots = snapshot.data!;
 
                             // Flag to track if any appointment matches the selected date
                             bool hasAppointmentOnSelectedDate = false;
