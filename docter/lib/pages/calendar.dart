@@ -40,15 +40,18 @@ class _CalendarPageState extends State<CalendarPage> {
 
             if (userRole == 'user' && userData.containsKey('appointments')) {
               setState(() {
-                appointments = List<DocumentReference>.from(userData['appointments']);
+                appointments =
+                    List<DocumentReference>.from(userData['appointments']);
               });
             } else if (userRole == 'doctor' && userData.containsKey('docref')) {
               DocumentReference docRef = userData['docref'];
               final doctorDoc = await docRef.get();
               final doctorData = doctorDoc.data() as Map<String, dynamic>?;
-              if (doctorData != null && doctorData.containsKey('appointments')) {
+              if (doctorData != null &&
+                  doctorData.containsKey('appointments')) {
                 setState(() {
-                  appointments = List<DocumentReference>.from(doctorData['appointments']);
+                  appointments =
+                      List<DocumentReference>.from(doctorData['appointments']);
                 });
               }
             }
@@ -57,9 +60,11 @@ class _CalendarPageState extends State<CalendarPage> {
       } catch (e) {
         print("Error fetching appointments: $e");
       } finally {
-        setState(() {
-          _isLoading = false;
-        });
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
       }
     }
   }
@@ -135,7 +140,8 @@ class _CalendarPageState extends State<CalendarPage> {
               ),
               calendarStyle: const CalendarStyle(
                 selectedDecoration: BoxDecoration(
-                  color: Color(0xFF0064F7), // Background color for the selected day
+                  color: Color(
+                      0xFF0064F7), // Background color for the selected day
                   shape: BoxShape.circle, // Shape of the selected day indicator
                 ),
                 selectedTextStyle: TextStyle(
@@ -151,80 +157,121 @@ class _CalendarPageState extends State<CalendarPage> {
             ),
           ),
           _isLoading
-              ? const Center(child: CircularProgressIndicator(color: Color(0xFF0064F7)))
+              ? const Center(
+                  child: CircularProgressIndicator(color: Color(0xFF0064F7)))
               : Expanded(
                   child: appointments.isNotEmpty
                       ? FutureBuilder(
-                          future: Future.wait(appointments.map((appointmentRef) => appointmentRef.get())),
+                          future: Future.wait(appointments
+                              .map((appointmentRef) => appointmentRef.get())),
                           builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
-                              return const Center(child: CircularProgressIndicator(color: Color(0xFF0064F7)));
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator(
+                                      color: Color(0xFF0064F7)));
                             }
 
-                            if (snapshot.hasError || !snapshot.hasData || snapshot.data == null) {
-                              return const Center(child: Text('No appointments', style: TextStyle(color: Color(0xFF0064F7))));
+                            if (snapshot.hasError ||
+                                !snapshot.hasData ||
+                                snapshot.data == null) {
+                              return const Center(
+                                  child: Text('No appointments',
+                                      style:
+                                          TextStyle(color: Color(0xFF0064F7))));
                             }
 
-                            List<DocumentSnapshot> appointmentSnapshots = snapshot.data!;
+                            List<DocumentSnapshot> appointmentSnapshots =
+                                snapshot.data!;
 
                             // Flag to track if any appointment matches the selected date
                             bool hasAppointmentOnSelectedDate = false;
 
-                            List<Widget> appointmentWidgets = appointmentSnapshots.map((appointmentSnapshot) {
-                              if (!appointmentSnapshot.exists) return const SizedBox.shrink();
+                            List<Widget> appointmentWidgets =
+                                appointmentSnapshots.map((appointmentSnapshot) {
+                              if (!appointmentSnapshot.exists)
+                                return const SizedBox.shrink();
 
-                              final appointmentData = appointmentSnapshot.data() as Map<String, dynamic>;
-                              final timestamp = (appointmentData['timestamp'] as Timestamp).toDate();
+                              final appointmentData = appointmentSnapshot.data()
+                                  as Map<String, dynamic>;
+                              final timestamp =
+                                  (appointmentData['timestamp'] as Timestamp)
+                                      .toDate();
 
                               if (_isSameDay(timestamp)) {
-                                hasAppointmentOnSelectedDate = true; // Set flag if an appointment matches the date
+                                hasAppointmentOnSelectedDate =
+                                    true; // Set flag if an appointment matches the date
 
                                 final doctorRef = appointmentData['doctor'];
                                 final locationRef = appointmentData['location'];
-                                final status = appointmentData['status'] ?? 'unknown';
+                                final status =
+                                    appointmentData['status'] ?? 'unknown';
 
                                 return FutureBuilder<DocumentSnapshot>(
                                   future: doctorRef.get(),
                                   builder: (context, doctorSnapshot) {
-                                    if (!doctorSnapshot.hasData || doctorSnapshot.data == null) {
+                                    if (!doctorSnapshot.hasData ||
+                                        doctorSnapshot.data == null) {
                                       return const SizedBox.shrink();
                                     }
 
-                                    final doctorData = doctorSnapshot.data!.data() as Map<String, dynamic>;
-                                    final profileImageUrl = doctorData['profileImageUrl'];
+                                    final doctorData = doctorSnapshot.data!
+                                        .data() as Map<String, dynamic>;
+                                    final profileImageUrl =
+                                        doctorData['profileImageUrl'];
                                     final doctorName = doctorData['name'];
-                                    final specialization = doctorData['specialization'];
+                                    final specialization =
+                                        doctorData['specialization'];
 
                                     return FutureBuilder<DocumentSnapshot>(
                                       future: locationRef.get(),
                                       builder: (context, locationSnapshot) {
-                                        if (!locationSnapshot.hasData || locationSnapshot.data == null) {
+                                        if (!locationSnapshot.hasData ||
+                                            locationSnapshot.data == null) {
                                           return const SizedBox.shrink();
                                         }
 
-                                        final locationData = locationSnapshot.data!.data() as Map<String, dynamic>;
-                                        final locationName = locationData['name'];
+                                        final locationData =
+                                            locationSnapshot.data!.data()
+                                                as Map<String, dynamic>;
+                                        final locationName =
+                                            locationData['name'];
 
                                         return GestureDetector(
                                           onTap: () {
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                builder: (context) => AppointmentPage(appointment: appointmentSnapshot),
+                                                builder: (context) =>
+                                                    AppointmentPage(
+                                                        appointment:
+                                                            appointmentSnapshot),
                                               ),
                                             );
                                           },
                                           child: Padding(
-                                            padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 8, bottom: 8),
+                                            padding: const EdgeInsets.only(
+                                                left: 10.0,
+                                                right: 10.0,
+                                                top: 8,
+                                                bottom: 8),
                                             child: Container(
-                                              margin: const EdgeInsets.symmetric(vertical: 2.0),
-                                              padding: const EdgeInsets.all(4.0),
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 2.0),
+                                              padding:
+                                                  const EdgeInsets.all(4.0),
                                               decoration: BoxDecoration(
-                                                border: Border.all(color: Colors.grey.withOpacity(0.8), width: 0.3),
-                                                borderRadius: BorderRadius.circular(12.0),
+                                                border: Border.all(
+                                                    color: Colors.grey
+                                                        .withOpacity(0.8),
+                                                    width: 0.3),
+                                                borderRadius:
+                                                    BorderRadius.circular(12.0),
                                               ),
                                               child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   Stack(
                                                     children: [
@@ -232,40 +279,56 @@ class _CalendarPageState extends State<CalendarPage> {
                                                         right: 0,
                                                         top: 0,
                                                         child: Container(
-																													height: 30,
-																													width: 80,
-																													padding: const EdgeInsets.all(4.0),
-																													decoration: BoxDecoration(
-																														borderRadius: BorderRadius.circular(8.0),
-																													),
-																													child: Center( // Center the text inside the container
-																														child: Text(
-																															'$status',
-																															style: TextStyle(
-																																color: _getStatusColor(status), // Text color according to the status
-																																fontSize: 14,
-																																fontWeight: FontWeight.w700,
-																															),
-																														),
-																													),
-																												),
+                                                          height: 30,
+                                                          width: 80,
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(4.0),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8.0),
+                                                          ),
+                                                          child: Center(
+                                                            // Center the text inside the container
+                                                            child: Text(
+                                                              '$status',
+                                                              style: TextStyle(
+                                                                color: _getStatusColor(
+                                                                    status), // Text color according to the status
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
                                                       ),
                                                       ListTile(
-                                                        contentPadding: EdgeInsets.zero,
+                                                        contentPadding:
+                                                            EdgeInsets.zero,
                                                         leading: CircleAvatar(
-                                                          backgroundImage: NetworkImage(profileImageUrl),
+                                                          backgroundImage:
+                                                              NetworkImage(
+                                                                  profileImageUrl),
                                                           radius: 35,
                                                         ),
                                                         title: Text(
                                                           doctorName,
-                                                          style: const TextStyle(
-                                                            fontWeight: FontWeight.bold,
+                                                          style:
+                                                              const TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
                                                             fontSize: 15,
                                                           ),
                                                         ),
                                                         subtitle: Text(
                                                           specialization,
-                                                          style: const TextStyle(
+                                                          style:
+                                                              const TextStyle(
                                                             fontSize: 12,
                                                             color: Colors.grey,
                                                           ),
@@ -275,40 +338,72 @@ class _CalendarPageState extends State<CalendarPage> {
                                                   ),
                                                   const SizedBox(height: 5),
                                                   Padding(
-                                                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 8.0,
+                                                            right: 8.0),
                                                     child: Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween, // Space the pairs evenly
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween, // Space the pairs evenly
                                                       children: [
                                                         // First Pair: Calendar icon and date text
                                                         Row(
                                                           children: [
-                                                            const Icon(CupertinoIcons.calendar_today, color: Color(0xFF0064F7)),
-                                                            const SizedBox(width: 4), // Slight spacing between icon and text
+                                                            const Icon(
+                                                                CupertinoIcons
+                                                                    .calendar_today,
+                                                                color: Color(
+                                                                    0xFF0064F7)),
+                                                            const SizedBox(
+                                                                width:
+                                                                    4), // Slight spacing between icon and text
                                                             Text(
                                                               '${timestamp.day}/${timestamp.month}/${timestamp.year}',
-                                                              style: const TextStyle(fontSize: 14),
+                                                              style:
+                                                                  const TextStyle(
+                                                                      fontSize:
+                                                                          14),
                                                             ),
                                                           ],
                                                         ),
                                                         // Second Pair: Time icon and time text
                                                         Row(
                                                           children: [
-                                                            const Icon(CupertinoIcons.time, color: Color(0xFF0064F7)),
-                                                            const SizedBox(width: 4), // Slight spacing between icon and text
+                                                            const Icon(
+                                                                CupertinoIcons
+                                                                    .time,
+                                                                color: Color(
+                                                                    0xFF0064F7)),
+                                                            const SizedBox(
+                                                                width:
+                                                                    4), // Slight spacing between icon and text
                                                             Text(
                                                               '${timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')}',
-                                                              style: const TextStyle(fontSize: 14),
+                                                              style:
+                                                                  const TextStyle(
+                                                                      fontSize:
+                                                                          14),
                                                             ),
                                                           ],
                                                         ),
                                                         // Third Pair: Location icon and location name
                                                         Row(
                                                           children: [
-                                                            const Icon(CupertinoIcons.location, color: Color(0xFF0064F7)),
-                                                            const SizedBox(width: 4), // Slight spacing between icon and text
+                                                            const Icon(
+                                                                CupertinoIcons
+                                                                    .location,
+                                                                color: Color(
+                                                                    0xFF0064F7)),
+                                                            const SizedBox(
+                                                                width:
+                                                                    4), // Slight spacing between icon and text
                                                             Text(
                                                               locationName,
-                                                              style: const TextStyle(fontSize: 14),
+                                                              style:
+                                                                  const TextStyle(
+                                                                      fontSize:
+                                                                          14),
                                                             ),
                                                           ],
                                                         ),
@@ -331,10 +426,16 @@ class _CalendarPageState extends State<CalendarPage> {
 
                             return hasAppointmentOnSelectedDate
                                 ? ListView(children: appointmentWidgets)
-                                : const Center(child: Text('No appointments on selected date', style: TextStyle(color: Color(0xFF0064F7))));
+                                : const Center(
+                                    child: Text(
+                                        'No appointments on selected date',
+                                        style: TextStyle(
+                                            color: Color(0xFF0064F7))));
                           },
                         )
-                      : const Center(child: Text('No appointments found', style: TextStyle(color: Color(0xFF0064F7)))),
+                      : const Center(
+                          child: Text('No appointments found',
+                              style: TextStyle(color: Color(0xFF0064F7)))),
                 ),
         ],
       ),
