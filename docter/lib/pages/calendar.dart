@@ -110,6 +110,7 @@ class _CalendarPageState extends State<CalendarPage> {
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w700,
+                      fontFamily: 'SFProDisplay',
                     ),
                   ),
                 ),
@@ -189,8 +190,9 @@ class _CalendarPageState extends State<CalendarPage> {
 
                             List<Widget> appointmentWidgets =
                                 appointmentSnapshots.map((appointmentSnapshot) {
-                              if (!appointmentSnapshot.exists)
+                              if (!appointmentSnapshot.exists) {
                                 return const SizedBox.shrink();
+                              }
 
                               final appointmentData = appointmentSnapshot.data()
                                   as Map<String, dynamic>;
