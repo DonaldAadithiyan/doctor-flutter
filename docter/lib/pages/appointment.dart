@@ -72,7 +72,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
             children: [
               Expanded(
                 child: Align(
-                  alignment: Alignment.centerLeft,
+                  alignment: Alignment.center,
                   child: Text(
                     'Appointment details',
                     style: TextStyle(

@@ -1,3 +1,4 @@
+import 'package:docter/navigationbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -85,44 +86,60 @@ class LoginPage extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () async {
                     try {
+                      // Show a loading indicator while waiting for authentication
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) => const Center(child: CircularProgressIndicator()),
+                      );
+
                       // Sign in using Firebase Auth
-                      UserCredential userCredential = await FirebaseAuth
-                          .instance
+                      UserCredential userCredential = await FirebaseAuth.instance
                           .signInWithEmailAndPassword(
                         email: emailController.text,
                         password: passwordController.text,
                       );
 
-                      // Get the email from the user credential
-                      String email = userCredential.user!.email!;
+                      // Wait until the FirebaseAuth is fully updated
+                      User? user = FirebaseAuth.instance.currentUser;
+                    if (user != null) {
+                          // Fetch user data from Firestore
+                          DocumentSnapshot<Object?> userDoc = await FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(user.uid)
+                              .get();
 
-                      // Fetch user data from Firestore
-                      DocumentSnapshot userDoc = await FirebaseFirestore
-                          .instance
-                          .collection('users')
-                          .doc(userCredential.user!.uid)
-                          .get();
+                          // Close the loading dialog before navigating
+                          Navigator.pop(context);
 
-                      if (userDoc.exists) {
-                        // Pass user data to another page
-                        Navigator.pushNamed(
-                          context,
-                          '/navigationBar',
-                          arguments: userDoc.data(), // Pass the user data
-                        );
-                      } else {
-                        // Handle case where user data does not exist
+                          if (userDoc.exists) {
+                            // Navigate to the NavigationBarPage with the user document snapshot
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => NavigationBarPage(
+                                  user: user,
+                                ),
+                              ),
+                            );
+                          } else {
+                            Navigator.pop(context); // Close loading if user data not found
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('User data not found')),
+                            );
+                          }
+                        } else {
+                          Navigator.pop(context); // Close loading if authentication fails
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('User not authenticated')),
+                          );
+                        }
+                      } catch (e) {
+                        Navigator.pop(context); // Close loading in case of error
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('User data not found')),
+                          SnackBar(content: Text('Login failed: ${e.toString()}')),
                         );
                       }
-                    } catch (e) {
-                      // Handle errors
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                            content: Text('Login failed: ${e.toString()}')),
-                      );
-                    }
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,

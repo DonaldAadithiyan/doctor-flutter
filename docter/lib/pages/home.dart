@@ -52,19 +52,20 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _loadUserProfileImage() async {
-    final userDoc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(widget.user!.uid)
-        .get();
+  final userDoc = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(widget.user!.uid)
+      .get();
 
-    if (userDoc.exists) {
-      setState(() {
-        _profileImageURL = userDoc['profileImageUrl'] ??
-            'https://firebasestorage.googleapis.com/v0/b/docter-63df0.appspot.com/o/profileimages%2FProfile_avatar_placeholder_large.png?alt=media&token=69f5245e-8ca5-4a24-9e2f-2e2cbeef8584';
-        _profileUsername = userDoc['displayName'] ?? 'Anonymous';
-      });
-    }
+  if (userDoc.exists && mounted) { // Check if the widget is still mounted
+    setState(() {
+      _profileImageURL = userDoc['profileImageUrl'] ??
+          'https://firebasestorage.googleapis.com/v0/b/docter-63df0.appspot.com/o/profileimages%2FProfile_avatar_placeholder_large.png?alt=media&token=69f5245e-8ca5-4a24-9e2f-2e2cbeef8584';
+      _profileUsername = userDoc['displayName'] ?? 'Anonymous';
+    });
   }
+}
+
 
   @override
   void dispose() {
@@ -147,6 +148,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           ),
+          automaticallyImplyLeading: false,
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 6.0),

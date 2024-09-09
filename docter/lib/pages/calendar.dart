@@ -33,26 +33,30 @@ class _CalendarPageState extends State<CalendarPage> {
             .doc(widget.user!.uid)
             .get();
 
-        if (userDoc.exists) {
+        if (userDoc.exists && mounted) {
           final userData = userDoc.data();
           if (userData != null && userData.containsKey('role')) {
             String userRole = userData['role'];
 
             if (userRole == 'user' && userData.containsKey('appointments')) {
-              setState(() {
-                appointments =
-                    List<DocumentReference>.from(userData['appointments']);
-              });
+              if (mounted) {
+                setState(() {
+                  appointments =
+                      List<DocumentReference>.from(userData['appointments']);
+                });
+              }
             } else if (userRole == 'doctor' && userData.containsKey('docref')) {
               DocumentReference docRef = userData['docref'];
               final doctorDoc = await docRef.get();
               final doctorData = doctorDoc.data() as Map<String, dynamic>?;
               if (doctorData != null &&
                   doctorData.containsKey('appointments')) {
-                setState(() {
-                  appointments =
-                      List<DocumentReference>.from(doctorData['appointments']);
-                });
+                if (mounted) {
+                  setState(() {
+                    appointments =
+                        List<DocumentReference>.from(doctorData['appointments']);
+                  });
+                }
               }
             }
           }
@@ -98,6 +102,7 @@ class _CalendarPageState extends State<CalendarPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Padding(
           padding: EdgeInsets.only(left: 8.0),
           child: Row(
