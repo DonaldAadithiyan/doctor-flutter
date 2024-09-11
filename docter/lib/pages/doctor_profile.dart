@@ -13,7 +13,7 @@ class DoctorProfilePage extends StatelessWidget {
     } catch (e) {
       print('Error signing out: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to sign out')),
+        const SnackBar(content: Text('Failed to sign out')),
       );
     }
   }
