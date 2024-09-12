@@ -131,13 +131,24 @@ class DoctorsListPage extends StatelessWidget {
                                     Text(
                                       doctorData['star_rating'] != null
                                           ? '${doctorData['star_rating']}'
-                                          : 'No rating available',
+                                          : '0.0',
                                       style: const TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
                                         color: Colors.black87,
                                       ),
                                     ),
+                                    const SizedBox(width: 3),
+                                        Text(
+                                          doctorData['review_count'] != null
+                                              ? '(${doctorData['review_count']})'
+                                              : '0',
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.black54,
+                                          ),
+                                        ),
                                   ],
                                 ),
                                 const SizedBox(height: 4),

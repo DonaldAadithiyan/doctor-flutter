@@ -1,5 +1,6 @@
 import 'package:docter/widgets/appointment/appointment_description.dart';
 import 'package:docter/widgets/appointment/appointment_reason.dart';
+import 'package:docter/widgets/appointment/appointment_review.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -188,13 +189,25 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                           color: Color(0xFF0064F7),
                                           size: 12,
                                         ),
+                                        
                                         const SizedBox(width: 4),
                                         Text(
                                           doctorData['star_rating'] != null
                                               ? '${doctorData['star_rating']}'
-                                              : 'No rating available',
+                                              : '0.0',
                                           style: const TextStyle(
                                             fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                            color: Color(0xFF0064F7),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 2),
+                                        Text(
+                                          doctorData['review_count'] != null
+                                              ? '(${doctorData['review_count']})'
+                                              : '0',
+                                          style: const TextStyle(
+                                            fontSize: 8,
                                             fontWeight: FontWeight.w600,
                                             color: Color(0xFF0064F7),
                                           ),
@@ -264,9 +277,15 @@ class _AppointmentPageState extends State<AppointmentPage> {
                   const SizedBox(height: 20),
 
                   // Review Section
-                  const Text(
-                    'Review',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Review',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      AppointmentReview(appointment: widget.appointment), // Add the review component here
+                    ],
                   ),
                   const SizedBox(height: 8),
                   Container(
