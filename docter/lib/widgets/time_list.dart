@@ -366,6 +366,7 @@ class _TimeListState extends State<TimeList> {
                     'user': userRef,
                     'location': locationRef,
                     'userFeedback': '',
+                    'reviews': [],
                   });
 
                   // Add the appointment reference to the user's 'appointments' array
