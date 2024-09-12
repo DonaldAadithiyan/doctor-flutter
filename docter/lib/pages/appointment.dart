@@ -109,7 +109,15 @@ class _AppointmentPageState extends State<AppointmentPage> {
         future: doctorRef.get(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: SizedBox(
+                width: 10, // Adjust the width to make it smaller
+                height: 10, // Adjust the height to make it smaller
+                child: CircularProgressIndicator(
+                  strokeWidth: 3, // Adjust the stroke width to make it thinner
+                ),
+              ),
+            );
           }
 
           if (snapshot.hasError || !snapshot.hasData) {

@@ -19,31 +19,45 @@ class ReviewList extends StatelessWidget {
       reviews = appointment!.get('reviews') ?? [];
     }
 
-    return SizedBox(
-      height: 140, // Adjust height as needed
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: reviews.length,
-        itemBuilder: (context, index) {
-          final reviewRef = reviews[index] as DocumentReference;
-          return FutureBuilder<DocumentSnapshot>(
-            future: reviewRef.get(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
-              }
-              if (!snapshot.hasData || snapshot.data == null) {
-                return const SizedBox();
-              }
+    // Check if there are any reviews to display
+    if (reviews.isEmpty) {
+      return const Center(child: Text('No reviews available'));
+    }
 
-              final reviewData = snapshot.data!.data() as Map<String, dynamic>;
+    return FutureBuilder<List<DocumentSnapshot>>(
+      future: Future.wait(reviews.map((reviewRef) => (reviewRef as DocumentReference).get()).toList()),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: SizedBox(
+              width: 30,
+              height: 30,
+              child: CircularProgressIndicator(
+                strokeWidth: 3,
+              ),
+            ),
+          );
+        }
+        if (!snapshot.hasData || snapshot.data == null) {
+          return const Center(child: Text('Failed to load reviews'));
+        }
+
+        final reviewDocs = snapshot.data!;
+
+        return SizedBox(
+          height: 140, // Adjust height as needed
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: reviewDocs.length,
+            itemBuilder: (context, index) {
+              final reviewData = reviewDocs[index].data() as Map<String, dynamic>;
               final userRef = reviewData['user'] as DocumentReference;
 
               return FutureBuilder<DocumentSnapshot>(
                 future: userRef.get(),
                 builder: (context, userSnapshot) {
                   if (userSnapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator();
+                    return const SizedBox(); // Avoid multiple loading indicators
                   }
                   if (!userSnapshot.hasData || userSnapshot.data == null) {
                     return const SizedBox();
@@ -108,9 +122,9 @@ class ReviewList extends StatelessWidget {
                 },
               );
             },
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }
