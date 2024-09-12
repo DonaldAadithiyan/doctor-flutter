@@ -160,8 +160,8 @@ class _AppointmentReviewState extends State<AppointmentReview> {
               },
             ),
             TextButton(
-              child: const Text('Submit'),
               onPressed: submitReview,
+              child: const Text('Submit'),
             ),
           ],
         );

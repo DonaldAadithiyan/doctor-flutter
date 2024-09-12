@@ -1,3 +1,4 @@
+import 'package:docter/widgets/review_list.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -293,6 +294,13 @@ class _DoctorPageState extends State<DoctorPage> {
                 ),
                 textAlign: TextAlign.justify,
               ),
+              const SizedBox(height: 18),
+              Text('Reviews',style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black.withOpacity(0.8),
+                ),),
+              ReviewList(doctor: widget.doctor), // Add the ReviewList widget here
               const SizedBox(height: 20), // Add some space before the calendar
               HorizontalCalendar(doctor: widget.doctor), // Add the HorizontalCalendar widget here
             ],

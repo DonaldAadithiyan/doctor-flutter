@@ -1,6 +1,7 @@
 import 'package:docter/widgets/appointment/appointment_description.dart';
 import 'package:docter/widgets/appointment/appointment_reason.dart';
 import 'package:docter/widgets/appointment/appointment_review.dart';
+import 'package:docter/widgets/review_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -132,7 +133,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                         width: 1,
                       ),
                     ),
-                    padding: const EdgeInsets.all(10.0),
+                    padding: const EdgeInsets.all(5.0),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -207,7 +208,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                               ? '(${doctorData['review_count']})'
                                               : '0',
                                           style: const TextStyle(
-                                            fontSize: 8,
+                                            fontSize: 10,
                                             fontWeight: FontWeight.w600,
                                             color: Color(0xFF0064F7),
                                           ),
@@ -280,21 +281,15 @@ class _AppointmentPageState extends State<AppointmentPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
+                      Text(
                         'Review',
                         style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
-                      AppointmentReview(appointment: widget.appointment), // Add the review component here
+                      AppointmentReview(appointment: widget.appointment),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      appointmentData['review'] ?? 'No review provided',
-                      style: const TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.w700),
-                    ),
-                  ),
+                  ReviewList(appointment: widget.appointment), // Add the review component here
+                  
                 ],
               ),
             ),

@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 class AppointmentDescription extends StatefulWidget {
   final DocumentSnapshot? appointment;
 
-  const AppointmentDescription({Key? key, this.appointment}) : super(key: key);
+  const AppointmentDescription({super.key, this.appointment});
 
   @override
   _AppointmentDescriptionState createState() => _AppointmentDescriptionState();
@@ -63,9 +63,9 @@ class _AppointmentDescriptionState extends State<AppointmentDescription> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            const Text(
               'Doctor Description',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             if (isEditable)
               IconButton(

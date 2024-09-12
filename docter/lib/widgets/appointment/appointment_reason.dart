@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 class AppointmentReason extends StatefulWidget {
   final DocumentSnapshot? appointment;
 
-  const AppointmentReason({Key? key, this.appointment}) : super(key: key);
+  const AppointmentReason({super.key, this.appointment});
 
   @override
   _AppointmentReasonState createState() => _AppointmentReasonState();
@@ -63,9 +63,9 @@ class _AppointmentReasonState extends State<AppointmentReason> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            const Text(
               'Reason',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             if (isEditable)
               IconButton(
