@@ -68,41 +68,41 @@ class _AppointmentPageState extends State<AppointmentPage> {
           ),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(
-              CupertinoIcons.trash,
-              color: Color(0xFF0064F7),
-              size: 18,
+          // Only display the delete icon if the appointment is in the future
+          if (timestamp.isAfter(DateTime.now())) 
+            IconButton(
+              icon: const Icon(
+                CupertinoIcons.trash,
+                color: Color(0xFF0064F7),
+                size: 18,
+              ),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Delete Appointment'),
+                      content: const Text('Are you sure you want to delete this appointment?'),
+                      actions: [
+                        TextButton(
+                          child: const Text('Cancel'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        TextButton(
+                          child: const Text('Delete'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            deleteAppointment();
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
             ),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: const Text('Delete Appointment'),
-                    content: const Text
-
-('Are you sure you want to delete this appointment?'),
-                    actions: [
-                      TextButton(
-                        child: const Text('Cancel'),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                      TextButton(
-                        child: const Text('Delete'),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          deleteAppointment();
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-          ),
         ],
       ),
       body: FutureBuilder<DocumentSnapshot>(
@@ -289,7 +289,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
+                      const Text(
                         'Review',
                         style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),

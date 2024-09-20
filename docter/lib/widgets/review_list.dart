@@ -7,7 +7,7 @@ class ReviewList extends StatelessWidget {
   final DocumentSnapshot? doctor;
   final DocumentSnapshot? appointment;
 
-  const ReviewList({Key? key, this.doctor, this.appointment}) : super(key: key);
+  const ReviewList({super.key, this.doctor, this.appointment});
 
   @override
   Widget build(BuildContext context) {
@@ -21,11 +21,18 @@ class ReviewList extends StatelessWidget {
 
     // Check if there are any reviews to display
     if (reviews.isEmpty) {
-      return const Center(child: Text('No reviews available'));
+      Container(
+        padding: const EdgeInsets.all(8.0),
+        child: const Text('No reviews available',
+            style: TextStyle(
+                fontSize: 14, color: Colors.grey, fontWeight: FontWeight.w700)),
+      );
     }
 
     return FutureBuilder<List<DocumentSnapshot>>(
-      future: Future.wait(reviews.map((reviewRef) => (reviewRef as DocumentReference).get()).toList()),
+      future: Future.wait(reviews
+          .map((reviewRef) => (reviewRef as DocumentReference).get())
+          .toList()),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -50,7 +57,8 @@ class ReviewList extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             itemCount: reviewDocs.length,
             itemBuilder: (context, index) {
-              final reviewData = reviewDocs[index].data() as Map<String, dynamic>;
+              final reviewData =
+                  reviewDocs[index].data() as Map<String, dynamic>;
               final userRef = reviewData['user'] as DocumentReference;
 
               return FutureBuilder<DocumentSnapshot>(
@@ -63,16 +71,20 @@ class ReviewList extends StatelessWidget {
                     return const SizedBox();
                   }
 
-                  final userData = userSnapshot.data!.data() as Map<String, dynamic>;
+                  final userData =
+                      userSnapshot.data!.data() as Map<String, dynamic>;
                   final String userName = userData['displayName'] ?? 'Unknown';
-                  final String profileImageUrl = userData['profileImageUrl'] ?? '';
+                  final String profileImageUrl =
+                      userData['profileImageUrl'] ?? '';
 
                   return Container(
-                    width: MediaQuery.of(context).size.width * 0.895, // Set width to full screen width
+                    width: MediaQuery.of(context).size.width *
+                        0.895, // Set width to full screen width
                     margin: const EdgeInsets.all(8.0),
                     padding: const EdgeInsets.all(8.0),
                     decoration: BoxDecoration(
-                      border: Border.all(color: Color(0xFF0064F7).withOpacity(0.5)),
+                      border: Border.all(
+                          color: const Color(0xFF0064F7).withOpacity(0.5)),
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                     child: Column(
@@ -83,14 +95,17 @@ class ReviewList extends StatelessWidget {
                             CircleAvatar(
                               backgroundImage: profileImageUrl.isNotEmpty
                                   ? NetworkImage(profileImageUrl)
-                                  : const AssetImage('assets/default_profile.png') as ImageProvider,
+                                  : const AssetImage(
+                                          'assets/default_profile.png')
+                                      as ImageProvider,
                               radius: 20,
                             ),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
                                 userName,
-                                style: const TextStyle(fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
