@@ -252,6 +252,38 @@ class _DoctorPageState extends State<DoctorPage> {
                       ),
                   ],
                 ),
+              Container(
+                padding: const EdgeInsets.only(top:8, bottom:8),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Color(0xFF0064F7),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Icon(
+                          CupertinoIcons.chat_bubble,
+                          color: Colors.white,
+                          size: 18,
+                        ),
+                      ),
+                      const SizedBox(width: 15),
+                      Text(
+                        'Create chat request',
+                        style: const TextStyle(
+                          color: Color(0xFF0064F7),
+                          fontSize: 15,
+                        ),
+                      ),
+                    ],
+                  ),
+              ),
               const SizedBox(height: 10),
               Text(
                 'About Me',

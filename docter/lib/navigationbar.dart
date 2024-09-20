@@ -1,9 +1,9 @@
+import 'package:docter/chat/chatselection.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'pages/home.dart';
-import 'pages/chat.dart';
 import 'pages/calendar.dart';
 import 'pages/doctor_profile.dart';
 import 'pages/user_profile.dart';
@@ -26,7 +26,7 @@ class _NavigationBarPageState extends State<NavigationBarPage> {
     super.initState();
     _pages = [
       HomePage(user: widget.user),
-      ChatPage(user: widget.user),
+      ChatSelectionPage(user: widget.user), 
       CalendarPage(user: widget.user),
       Container(), // Placeholder for dynamic profile page
     ];
