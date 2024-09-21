@@ -1,4 +1,5 @@
 import 'package:docter/widgets/review_list.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,6 +18,16 @@ class DoctorPage extends StatefulWidget {
 
 class _DoctorPageState extends State<DoctorPage> {
   bool isExpanded = false; // Controls whether the full text is shown
+  String chatStatus = "create chat request"; // Default status
+  bool isContainerClickable = true; // Controls container's clickability
+  final FirebaseAuth _auth = FirebaseAuth.instance; // For the current user
+  bool isLoading = false; // Controls the loading state
+
+  @override
+  void initState() {
+    super.initState();
+    checkChatStatus();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +50,8 @@ class _DoctorPageState extends State<DoctorPage> {
           ),
         ),
       ),
-      body: SingleChildScrollView( // Wrap the body with SingleChildScrollView
+      body: SingleChildScrollView(
+        // Wrap the body with SingleChildScrollView
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -90,7 +102,8 @@ class _DoctorPageState extends State<DoctorPage> {
                               ),
                               Container(
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFF6F7F9).withOpacity(0.1),
+                                  color:
+                                      const Color(0xFFF6F7F9).withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(0),
                                   boxShadow: [
                                     BoxShadow(
@@ -122,16 +135,16 @@ class _DoctorPageState extends State<DoctorPage> {
                                       ),
                                     ),
                                     const SizedBox(width: 3),
-                                        Text(
-                                          doctorData['review_count'] != null
-                                              ? '(${doctorData['review_count']})'
-                                              : '0',
-                                          style: const TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.black54,
-                                          ),
-                                        ),
+                                    Text(
+                                      doctorData['review_count'] != null
+                                          ? '(${doctorData['review_count']})'
+                                          : '0',
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black54,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -252,22 +265,32 @@ class _DoctorPageState extends State<DoctorPage> {
                       ),
                   ],
                 ),
-              Container(
-                padding: const EdgeInsets.only(top:8, bottom:8),
+              GestureDetector(
+                onTap: isContainerClickable
+                    ? () {
+                        if (chatStatus == "create chat request") {
+                          createChatRequest(); // Create a new chat request
+                        } else if (chatStatus == "Go to chat") {
+                          // Handle navigation to chat page
+                        }
+                      }
+                    : null,
+                child: Container(
+                  padding: const EdgeInsets.only(top: 8, bottom: 8),
                   width: double.infinity,
                   decoration: BoxDecoration(
                     color: Colors.transparent,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                child: Row(
+                  child: Row(
                     children: [
                       Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: Color(0xFF0064F7),
+                          color: const Color(0xFF0064F7),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Icon(
+                        child: const Icon(
                           CupertinoIcons.chat_bubble,
                           color: Colors.white,
                           size: 18,
@@ -275,7 +298,11 @@ class _DoctorPageState extends State<DoctorPage> {
                       ),
                       const SizedBox(width: 15),
                       Text(
-                        'Create chat request',
+                        chatStatus == 'chat request sent'
+                            ? 'Chat request sent'
+                            : chatStatus == 'Go to chat'
+                                ? 'Go to chat'
+                                : 'Create chat request', // Default to 'Create chat request'
                         style: const TextStyle(
                           color: Color(0xFF0064F7),
                           fontSize: 15,
@@ -283,6 +310,7 @@ class _DoctorPageState extends State<DoctorPage> {
                       ),
                     ],
                   ),
+                ),
               ),
               const SizedBox(height: 10),
               Text(
@@ -327,18 +355,139 @@ class _DoctorPageState extends State<DoctorPage> {
                 textAlign: TextAlign.justify,
               ),
               const SizedBox(height: 18),
-              Text('Reviews',style: TextStyle(
+              Text(
+                'Reviews',
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Colors.black.withOpacity(0.8),
-                ),),
-              ReviewList(doctor: widget.doctor), // Add the ReviewList widget here
+                ),
+              ),
+              ReviewList(
+                  doctor: widget.doctor), // Add the ReviewList widget here
               const SizedBox(height: 20), // Add some space before the calendar
-              HorizontalCalendar(doctor: widget.doctor), // Add the HorizontalCalendar widget here
+              HorizontalCalendar(
+                  doctor:
+                      widget.doctor), // Add the HorizontalCalendar widget here
             ],
           ),
         ),
       ),
     );
+  }
+
+  Future<void> checkChatStatus() async {
+  try {
+    final doctorData = widget.doctor.data() as Map<String, dynamic>;
+    final DocumentReference doctorUserRef = doctorData['user'];
+
+    // Get the user document for the doctor
+    final DocumentSnapshot doctorUserDoc = await doctorUserRef.get();
+
+    if (doctorUserDoc.data() == null) {
+      print('Doctor user document is null.');
+      return;
+    }
+
+    final Map<String, dynamic> doctorUserData = doctorUserDoc.data() as Map<String, dynamic>;
+
+    if (!doctorUserData.containsKey('chats')) {
+      await doctorUserRef.update({'chats': []});
+    }
+
+    final List chats = doctorUserData['chats'];
+
+    final User? loggedInUser = _auth.currentUser;
+    if (loggedInUser == null) return;
+
+    // Fetch all valid chat documents and ignore null ones
+    final validChats = await Future.wait(chats.map((chatRef) async {
+      final chatDoc = await chatRef.get();
+      return chatDoc.exists && chatDoc.data() != null ? chatDoc : null;
+    }));
+
+    // Filter out null documents
+    final nonNullChats = validChats.where((chatDoc) => chatDoc != null).toList();
+
+    for (var chatDoc in nonNullChats) {
+      final chatData = chatDoc!.data() as Map<String, dynamic>;
+
+      final DocumentReference chatUserRef = chatData['user'];
+
+      if (chatUserRef.id == loggedInUser.uid) {
+        if (chatData['permission'] == 'waiting') {
+          setState(() {
+            chatStatus = "chat request sent";
+            isContainerClickable = false;
+          });
+          return;
+        } else if (chatData['permission'] == 'accepted') {
+          setState(() {
+            chatStatus = "Go to chat";
+            isContainerClickable = true;
+          });
+          return;
+        } else if (chatData['permission'] == 'denied') {
+          setState(() {
+            chatStatus = "create chat request";
+            isContainerClickable = true;
+          });
+          return;
+        }
+      }
+    }
+
+    // If no matching chat found
+    setState(() {
+      chatStatus = "create chat request";
+      isContainerClickable = true;
+    });
+  } catch (e) {
+    print('Error in checking chat status: $e');
+  }
+}
+
+  Future<void> createChatRequest() async {
+    try {
+      final doctorData = widget.doctor.data() as Map<String, dynamic>;
+      final User? loggedInUser = _auth.currentUser;
+      if (loggedInUser == null) return;
+
+      // Get the reference to the doctor’s user object
+      final DocumentReference doctorUserRef = doctorData['user'];
+
+      // Create a reference to the 'chats' collection
+      final CollectionReference chatsRef =
+          FirebaseFirestore.instance.collection('chats');
+
+      // Create the new chat document
+      final DocumentReference newChatDocRef = await chatsRef.add({
+        'user': FirebaseFirestore.instance
+            .collection('users')
+            .doc(loggedInUser.uid),
+        'doctor': doctorUserRef,
+        'permission': 'waiting',
+      });
+
+      // Add the new chat reference to the logged-in user's 'chats' field
+      final DocumentReference loggedInUserRef =
+          FirebaseFirestore.instance.collection('users').doc(loggedInUser.uid);
+      await loggedInUserRef.update({
+        'chats': FieldValue.arrayUnion([newChatDocRef])
+      });
+
+      // Add the new chat reference to the doctor's user document 'chats' field
+      await doctorUserRef.update({
+        'chats': FieldValue.arrayUnion([newChatDocRef])
+      });
+
+      // Update UI after creating the chat request
+      setState(() {
+        chatStatus = "chat request sent";
+        isContainerClickable = false;
+      });
+    } catch (e) {
+      print('Error creating chat request: $e');
+    }
   }
 }
